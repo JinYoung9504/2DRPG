@@ -3,6 +3,7 @@
 //  - 플레이어가 감지 범위에 들어오면: 플레이어를 향해 달려가고, 가까워지면 몸을 날려 덮침
 //  - 플레이어가 멀어지면: 원래 자리로 돌아감
 //  - 몸에 닿으면 플레이어에게 데미지 + 넉백
+//  - 맞으면 뒤로 밀리고 잠깐 멈춤, 체력 0이면 사라졌다가 리스폰 (EnemyHealth)
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D), typeof(Animator), typeof(SpriteRenderer))]
@@ -25,7 +26,7 @@ public class SlimeEnemy : MonoBehaviour
     public float lungeCooldown = 1.4f;
 
     [Header("공격")]
-    public float contactDamage = 10f;
+    public float attackDamage = 1f;       // 몸에 닿았을 때 플레이어가 받는 데미지
     public Vector2 knockback = new Vector2(6f, 4f);
 
     [Header("그림 방향")]
@@ -38,6 +39,7 @@ public class SlimeEnemy : MonoBehaviour
     Transform player; PlayerHealth playerHealth; Rigidbody2D playerRb;
     float homeX, wanderTarget, nextWanderTime, nextLungeTime;
     bool lunging;
+    EnemyHealth health; float stunUntil;
     float animBase = 1f;
 
 #if UNITY_6000_0_OR_NEWER
@@ -54,6 +56,17 @@ public class SlimeEnemy : MonoBehaviour
         foreach (var c in GetComponents<Collider2D>()) if (!c.isTrigger) body = c;
         homeX = wanderTarget = transform.position.x;
         nextWanderTime = Time.time + Random.Range(1f, 3f);
+
+        health = GetComponent<EnemyHealth>();
+        if (health == null) health = gameObject.AddComponent<EnemyHealth>();
+        health.OnHurt += dir =>
+        {
+            stunUntil = Time.time + 0.35f;          // 맞으면 잠깐 멈칫
+            lunging = false;
+            Vel = new Vector2(dir * 3.5f, 3f);      // 뒤로 튕겨남
+            state = State.Chase;                     // 맞으면 화나서 추격
+        };
+        health.OnRespawned += () => { state = State.Idle; lunging = false; wanderTarget = homeX; sr.flipX = false; };
         animBase = Random.Range(0.9f, 1.1f);   // 여러 마리가 똑같이 움직이지 않게
     }
 
@@ -79,6 +92,9 @@ public class SlimeEnemy : MonoBehaviour
 
     void Update()
     {
+        if (health.IsDead) return;
+        if (Time.time < stunUntil) { anim.SetFloat("Speed", 0f); anim.speed = animBase; return; }
+
         bool grounded = Grounded();
         if (lunging && grounded && Vel.y <= 0.01f) lunging = false;
 
@@ -151,11 +167,12 @@ public class SlimeEnemy : MonoBehaviour
     // 몸에 닿으면 데미지 (Trigger 충돌체 사용)
     void OnTriggerStay2D(Collider2D other)
     {
+        if (health.IsDead || Time.time < stunUntil) return;
         if (playerHealth == null || other.attachedRigidbody != playerRb) return;
         if (playerHealth.IsDead) return;
 
         float before = playerHealth.CurrentHP;
-        playerHealth.TakeDamage(contactDamage);
+        playerHealth.TakeDamage(attackDamage);
         if (playerHealth.CurrentHP < before && playerRb != null)   // 실제로 맞았을 때만 넉백 (무적시간 고려)
         {
             float dir = Mathf.Sign(player.position.x - transform.position.x);

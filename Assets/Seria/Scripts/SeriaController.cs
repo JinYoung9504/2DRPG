@@ -44,6 +44,17 @@ public class SeriaController : MonoBehaviour
     public float jumpBufferTime = 0.1f;    // 착지 직전에 누른 점프를 기억하는 시간
     public LayerMask groundLayer = ~0;
 
+    [Header("공격력")]
+    public float attackDamage = 5f;      // 기본 공격 (Ctrl)
+    public float heavyDamage = 5f;       // 강공격 (Space) — 따로 정하지 않아 기본 공격과 동일
+    public float skillDamage = 10f;      // 스킬 (Shift)
+
+    // 공격 판정 범위 (캐릭터 발밑 기준, 바라보는 방향 앞쪽)
+    [System.Serializable] public struct HitBox { public float delay; public Vector2 offset; public Vector2 size; }
+    public HitBox attackBox = new HitBox { delay = 0.15f, offset = new Vector2(0.8f, 0.6f), size = new Vector2(1.4f, 1.2f) };
+    public HitBox heavyBox  = new HitBox { delay = 0.28f, offset = new Vector2(0.9f, 0.7f), size = new Vector2(1.8f, 1.4f) };
+    public HitBox skillBox  = new HitBox { delay = 0.5f,  offset = new Vector2(1.1f, 0.8f), size = new Vector2(2.8f, 2.0f) };
+
     [Header("스킬")]
     public float skillCooldown = 3f;
     public float SkillCooldownRemaining => Mathf.Max(0f, skillReadyTime - Time.time);
@@ -190,6 +201,8 @@ public class SeriaController : MonoBehaviour
             return;
         }
 
+        CheckAttackStart();
+
         bool grounded = IsGrounded();
         bool busy = Busy();
 
@@ -264,6 +277,43 @@ public class SeriaController : MonoBehaviour
         anim.SetFloat("Speed", Mathf.Abs(x));
         anim.SetFloat("VelY", Vel.y);
         anim.SetBool("Grounded", grounded);
+    }
+
+    // ── 공격 판정 ──
+    // 공격 애니메이션이 "시작되는 순간"을 감지해서, 정해진 시간 뒤 앞쪽 범위에 있는 적에게 데미지
+    int lastStateHash;
+    void CheckAttackStart()
+    {
+        if (anim.runtimeAnimatorController == null) return;
+        var info = anim.GetCurrentAnimatorStateInfo(0);
+        if (info.fullPathHash == lastStateHash) return;
+        lastStateHash = info.fullPathHash;
+        if (info.IsName("Attack1")) StartCoroutine(DoHit(attackBox, attackDamage));
+        else if (info.IsName("Attack2")) StartCoroutine(DoHit(heavyBox, heavyDamage));
+        else if (info.IsName("Skill")) StartCoroutine(DoHit(skillBox, skillDamage));
+    }
+
+    IEnumerator DoHit(HitBox box, float damage)
+    {
+        float dir = sr.flipX ? -1f : 1f;                 // 휘두르기 시작한 방향 기준
+        yield return new WaitForSeconds(box.delay);
+        if (dead) yield break;
+        Vector2 center = (Vector2)transform.position + new Vector2(box.offset.x * dir, box.offset.y);
+        var done = new System.Collections.Generic.HashSet<EnemyHealth>();
+        foreach (var c in Physics2D.OverlapBoxAll(center, box.size, 0f))
+        {
+            var e = c.GetComponentInParent<EnemyHealth>();
+            if (e != null && !e.IsDead && done.Add(e)) e.TakeDamage(damage, transform.position.x);   // 한 번 휘두를 때 적 1마리당 1회
+        }
+    }
+
+    // Scene 창에서 캐릭터를 선택하면 공격 범위가 보임
+    void OnDrawGizmosSelected()
+    {
+        float dir = (sr != null && sr.flipX) ? -1f : 1f;
+        void Box(HitBox b, Color c) { Gizmos.color = c; Gizmos.DrawWireCube(transform.position + new Vector3(b.offset.x * dir, b.offset.y), b.size); }
+        if (sr == null) sr = GetComponent<SpriteRenderer>();
+        Box(attackBox, Color.yellow); Box(heavyBox, new Color(1f, 0.5f, 0f)); Box(skillBox, Color.red);
     }
 
     // ── 대쉬 ──

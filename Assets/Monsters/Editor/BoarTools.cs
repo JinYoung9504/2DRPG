@@ -1,16 +1,16 @@
-// 슬라임 스프라이트 자동 설정 + 메뉴: Tools > Monsters > 슬라임 배치
+// 멧돼지 스프라이트 자동 설정 + 메뉴: Tools > Monsters > 멧돼지 배치
 using System.IO;
 using System.Linq;
 using UnityEditor;
 using UnityEditor.Animations;
 using UnityEngine;
 
-public class SlimeImporter : AssetPostprocessor
+public class BoarImporter : AssetPostprocessor
 {
-    public const int CellW = 160, CellH = 128;
+    public const int CellW = 256, CellH = 160;
     void OnPreprocessTexture()
     {
-        if (!assetPath.Replace('\\', '/').Contains("/Monsters/Slime/Slime_")) return;
+        if (!assetPath.Replace('\\', '/').Contains("/Monsters/Boar/Boar_")) return;
         var ti = (TextureImporter)assetImporter;
         ti.textureType = TextureImporterType.Sprite;
         ti.spriteImportMode = SpriteImportMode.Multiple;
@@ -18,7 +18,6 @@ public class SlimeImporter : AssetPostprocessor
         ti.alphaIsTransparency = true; ti.mipmapEnabled = false;
         ti.filterMode = FilterMode.Bilinear;
         ti.textureCompression = TextureImporterCompression.Uncompressed;
-
         byte[] head = new byte[24];
         using (var fs = File.OpenRead(assetPath)) fs.Read(head, 0, 24);
         int width = (head[16] << 24) | (head[17] << 16) | (head[18] << 8) | head[19];
@@ -29,7 +28,7 @@ public class SlimeImporter : AssetPostprocessor
             metas[i] = new SpriteMetaData
             {
                 name = $"{baseName}_{i}", rect = new Rect(i * CellW, 0, CellW, CellH),
-                alignment = (int)SpriteAlignment.Custom, pivot = new Vector2(0.5f, 6f / CellH)
+                alignment = (int)SpriteAlignment.Custom, pivot = new Vector2(0.5f, 8f / CellH)
             };
 #pragma warning disable 618
         ti.spritesheet = metas;
@@ -37,14 +36,14 @@ public class SlimeImporter : AssetPostprocessor
     }
 }
 
-public static class SlimeTools
+public static class BoarTools
 {
-    const string Dir = "Assets/Monsters/Slime/";
-    const float FeetY = -4.0f;   // 마을 배경 바닥 높이
+    const string Dir = "Assets/Monsters/Boar/";
+    const float FeetY = -4.0f;
 
     static AnimationClip MakeClip(string name, float fps)
     {
-        var sprites = AssetDatabase.LoadAllAssetsAtPath($"{Dir}Slime_{name}.png").OfType<Sprite>()
+        var sprites = AssetDatabase.LoadAllAssetsAtPath($"{Dir}Boar_{name}.png").OfType<Sprite>()
             .OrderBy(s => int.Parse(s.name.Substring(s.name.LastIndexOf('_') + 1))).ToArray();
         var clip = new AnimationClip { frameRate = fps };
         var keys = new ObjectReferenceKeyframe[sprites.Length + 1];
@@ -52,18 +51,18 @@ public static class SlimeTools
         keys[sprites.Length] = new ObjectReferenceKeyframe { time = sprites.Length / fps, value = sprites[0] };
         AnimationUtility.SetObjectReferenceCurve(clip, EditorCurveBinding.PPtrCurve("", typeof(SpriteRenderer), "m_Sprite"), keys);
         var set = AnimationUtility.GetAnimationClipSettings(clip); set.loopTime = true; AnimationUtility.SetAnimationClipSettings(clip, set);
-        string path = $"{Dir}Slime_{name}.anim"; AssetDatabase.DeleteAsset(path); AssetDatabase.CreateAsset(clip, path);
+        string path = $"{Dir}Boar_{name}.anim"; AssetDatabase.DeleteAsset(path); AssetDatabase.CreateAsset(clip, path);
         return clip;
     }
 
     static AnimatorController BuildController()
     {
-        string path = Dir + "Slime.controller";
+        string path = Dir + "Boar.controller";
         AssetDatabase.DeleteAsset(path);
         var ctrl = AnimatorController.CreateAnimatorControllerAtPath(path);
         ctrl.AddParameter("Speed", AnimatorControllerParameterType.Float);
         var sm = ctrl.layers[0].stateMachine;
-        var idle = sm.AddState("Idle"); idle.motion = MakeClip("Idle", 8);
+        var idle = sm.AddState("Idle"); idle.motion = MakeClip("Idle", 5);
         var walk = sm.AddState("Walk"); walk.motion = MakeClip("Walk", 10);
         sm.defaultState = idle;
         var t1 = idle.AddTransition(walk); t1.hasExitTime = false; t1.duration = 0; t1.AddCondition(AnimatorConditionMode.Greater, 0.05f, "Speed");
@@ -72,50 +71,47 @@ public static class SlimeTools
         return ctrl;
     }
 
-    public static GameObject CreateSlime(Vector3 pos, AnimatorController ctrl)
+    static GameObject CreateBoar(Vector3 pos, AnimatorController ctrl)
     {
-        var go = new GameObject("Slime");
+        var go = new GameObject("Boar");
         go.transform.position = pos;
         var sr = go.AddComponent<SpriteRenderer>();
-        sr.sprite = AssetDatabase.LoadAllAssetsAtPath(Dir + "Slime_Idle.png").OfType<Sprite>().FirstOrDefault();
+        sr.sprite = AssetDatabase.LoadAllAssetsAtPath(Dir + "Boar_Idle.png").OfType<Sprite>().FirstOrDefault();
         sr.sortingOrder = -1;
         go.AddComponent<Animator>().runtimeAnimatorController = ctrl;
-        var rb = go.AddComponent<Rigidbody2D>(); rb.freezeRotation = true; rb.gravityScale = 3f;
-        rb.sleepMode = RigidbodySleepMode2D.NeverSleep;   // 가만히 있어도 접촉 판정 유지
+        var rb = go.AddComponent<Rigidbody2D>(); rb.freezeRotation = true; rb.gravityScale = 3f; rb.mass = 3f;
+        rb.sleepMode = RigidbodySleepMode2D.NeverSleep;
         var body = go.AddComponent<CapsuleCollider2D>();
-        body.direction = CapsuleDirection2D.Horizontal; body.size = new Vector2(1.0f, 0.7f); body.offset = new Vector2(0, 0.35f);
+        body.direction = CapsuleDirection2D.Horizontal; body.size = new Vector2(1.6f, 1.0f); body.offset = new Vector2(0, 0.5f);
         var hit = go.AddComponent<BoxCollider2D>();
-        hit.isTrigger = true; hit.size = new Vector2(0.9f, 0.6f); hit.offset = new Vector2(0, 0.32f);
-        var hp = go.AddComponent<EnemyHealth>(); hp.maxHP = 10f;
-        go.AddComponent<SlimeEnemy>();
-        Undo.RegisterCreatedObjectUndo(go, "Create Slime");
+        hit.isTrigger = true; hit.size = new Vector2(1.5f, 0.9f); hit.offset = new Vector2(0, 0.5f);
+        var hp = go.AddComponent<EnemyHealth>(); hp.maxHP = 20f; hp.hpBarOffset = new Vector2(0, 1.55f);
+        go.AddComponent<BoarEnemy>();
+        Undo.RegisterCreatedObjectUndo(go, "Create Boar");
         return go;
     }
 
-    [MenuItem("Tools/Monsters/슬라임 배치 (Spawn Slimes)")]
-    public static void SpawnSlimes()
+    [MenuItem("Tools/Monsters/멧돼지 배치 (Spawn Boars)")]
+    public static void SpawnBoars()
     {
-        // 기존 슬라임은 지우고 새로 배치
 #if UNITY_2023_1_OR_NEWER
-        var olds = Object.FindObjectsByType<SlimeEnemy>(FindObjectsSortMode.None);
+        var olds = Object.FindObjectsByType<BoarEnemy>(FindObjectsSortMode.None);
 #else
-        var olds = Object.FindObjectsOfType<SlimeEnemy>();
+        var olds = Object.FindObjectsOfType<BoarEnemy>();
 #endif
         foreach (var o in olds) Undo.DestroyObjectImmediate(o.gameObject);
-
         var ctrl = BuildController();
-        foreach (var x in new[] { 8f, 15f, 22f })
-            CreateSlime(new Vector3(x, FeetY + 0.05f, 0), ctrl);
-        Debug.Log("슬라임 3마리 배치 완료 (x = 8, 15, 22). Scene 창에서 끌어서 위치를 바꿀 수 있습니다.");
+        foreach (var x in new[] { -12f, -22f })
+            CreateBoar(new Vector3(x, FeetY + 0.05f, 0), ctrl);
+        Debug.Log("멧돼지 2마리 배치 완료 (x = -12, -22, 마을 왼쪽). Scene 창에서 끌어서 위치를 바꿀 수 있습니다.");
     }
 
-    [MenuItem("Tools/Monsters/선택 위치에 슬라임 1마리 추가")]
+    [MenuItem("Tools/Monsters/선택 위치에 멧돼지 1마리 추가")]
     public static void AddOne()
     {
-        var ctrl = AssetDatabase.LoadAssetAtPath<AnimatorController>(Dir + "Slime.controller");
+        var ctrl = AssetDatabase.LoadAssetAtPath<AnimatorController>(Dir + "Boar.controller");
         if (ctrl == null) ctrl = BuildController();
         var view = SceneView.lastActiveSceneView;
-        float x = view != null ? view.pivot.x : 0f;
-        Selection.activeGameObject = CreateSlime(new Vector3(x, FeetY + 0.05f, 0), ctrl);
+        Selection.activeGameObject = CreateBoar(new Vector3(view != null ? view.pivot.x : 0f, FeetY + 0.05f, 0), ctrl);
     }
 }
