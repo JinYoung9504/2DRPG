@@ -1,7 +1,7 @@
 // 세리아 조작 스크립트
 // ─────────────────────────────────────────────
 //  ← / →  : 이동 (같은 방향 두 번 빠르게 → 대쉬)
-//  Alt    : 점프 (짧게 누르면 낮게, 길게 누르면 높게)
+//  Alt    : 점프 (짧게 누르면 낮게, 길게 누르면 높게), 공중에서 한 번 더 → 2단 점프
 //  Ctrl   : 기본 공격 (공격 중에 한 번 더 누르면 강공격으로 이어짐)
 //  Space  : 강공격
 //  Shift  : 스킬 (쿨타임 3초)
@@ -49,6 +49,8 @@ public class SeriaController : MonoBehaviour
     public float jumpCutMultiplier = 0.5f; // 점프 키를 일찍 떼면 상승 속도에 곱해짐
     public float coyoteTime = 0.1f;        // 발판에서 떨어진 직후에도 점프 허용하는 시간
     public float jumpBufferTime = 0.1f;    // 착지 직전에 누른 점프를 기억하는 시간
+    public int maxAirJumps = 1;            // 공중 추가 점프 횟수 (1 = 2단 점프)
+    public float airJumpForce = 10f;       // 2단 점프 힘
     public LayerMask groundLayer = ~0;
 
     [Header("공격력")]
@@ -84,6 +86,7 @@ public class SeriaController : MonoBehaviour
     Vector3 baseScale; float squashT = 1f, squashSign; bool wasGrounded = true;
     bool dead;
     float coyoteCounter, jumpBufferCounter;
+    int airJumpsUsed;
     // 대쉬 상태
     float lastTapTime = -1f; int lastTapDir;
     bool dashing, airDashUsed; float dashEndTime, nextDashTime, nextGhostTime; int dashDir;
@@ -253,7 +256,9 @@ public class SeriaController : MonoBehaviour
 
         // ── 점프 타이밍 계산 ──
         coyoteCounter = grounded ? coyoteTime : coyoteCounter - Time.deltaTime;
-        jumpBufferCounter = Pressed(jumpKey, jumpKey2) ? jumpBufferTime : jumpBufferCounter - Time.deltaTime;
+        bool jumpPressed = Pressed(jumpKey, jumpKey2);
+        jumpBufferCounter = jumpPressed ? jumpBufferTime : jumpBufferCounter - Time.deltaTime;
+        if (grounded) airJumpsUsed = 0;
 
         Vector2 v = Vel;
 
@@ -270,6 +275,16 @@ public class SeriaController : MonoBehaviour
             Squash(-1f);                                  // 점프: 위로 늘어남
             jumpBufferCounter = 0;
             coyoteCounter = 0;
+        }
+        // 2단 점프: 공중에서 점프 키를 한 번 더
+        else if (jumpPressed && !grounded && coyoteCounter <= 0 && airJumpsUsed < maxAirJumps && !busy)
+        {
+            v.y = airJumpForce;
+            airJumpsUsed++;
+            jumpBufferCounter = 0;
+            anim.Play("Jump", 0, 0f);                     // 점프 동작 처음부터 다시
+            Squash(-1f);
+            SpawnAfterImage();                            // 발밑에 잔상 한 번
         }
         // 점프 키를 일찍 떼면 낮게 점프
         if (Released(jumpKey, jumpKey2) && v.y > 0)

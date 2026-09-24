@@ -65,6 +65,7 @@
     <Compile Include="Assets\Seria\Scripts\VirtualInput.cs" />
     <Compile Include="Assets\Maps\Scripts\MapPortal.cs" />
     <Compile Include="Assets\Seria\Scripts\PlayerHealth.cs" />
+    <Compile Include="Assets\Monsters\Scripts\GolemEnemy.cs" />
     <Compile Include="Assets\Monsters\Scripts\DamagePopup.cs" />
     <Compile Include="Assets\Monsters\Scripts\EnemyHealth.cs" />
     <Compile Include="Assets\Monsters\Scripts\SlimeEnemy.cs" />

@@ -1,6 +1,6 @@
 // 레벨 / 경험치
 //  필요 경험치: 1→2 : 3,  2→3 : 5,  3→4 : 10,  이후 20, 30, 40 ... (10씩 증가)
-//  레벨업 시 체력 전부 회복
+//  레벨업 시 체력 전부 회복, 최대 체력 +1% (반올림), 기본 공격력 +3
 //  [테스트] 에디터에서 F1 = 레벨 +1, F2 = 레벨 -1, F3 = 20레벨, F4 = 경험치 +1
 //           또는 Play 중 Inspector 의 Level 값을 직접 바꿔도 됩니다.
 using System;
@@ -16,6 +16,12 @@ public class PlayerLevel : MonoBehaviour
     public int maxLevel = 99;
     public bool healOnLevelUp = true;
 
+    [Header("레벨업 능력치")]
+    public float baseMaxHP = 100f;        // 1레벨 최대 체력
+    public float hpGrowthPercent = 1f;    // 레벨업마다 최대 체력 +1% (소수점 반올림)
+    public float baseAttack = 5f;         // 1레벨 기본 공격력
+    public float attackPerLevel = 3f;     // 레벨업마다 기본 공격력 +3
+
     public static PlayerLevel Instance { get; private set; }
     public static int CarryLevel = -1, CarryExp = 0;   // 맵 이동 / 이어하기 시 전달
 
@@ -30,6 +36,26 @@ public class PlayerLevel : MonoBehaviour
         return 10 * (lv - 2);          // 4→20, 5→30, 6→40 ...
     }
     public int Required => RequiredExp(level);
+
+    // 레벨별 최대 체력: 1레벨 100 → 레벨업마다 1%씩 증가, 매번 반올림 (100, 101, 102, 103 ...)
+    public float MaxHPFor(int lv)
+    {
+        float m = baseMaxHP;
+        for (int i = 1; i < lv; i++) m = Mathf.Floor(m * (1f + hpGrowthPercent / 100f) + 0.5f);
+        return m;
+    }
+    public float AttackFor(int lv) => baseAttack + attackPerLevel * (lv - 1);
+
+    // 레벨에 맞게 최대 체력·공격력 적용
+    void ApplyStats(bool fillHP)
+    {
+        var hp = GetComponent<PlayerHealth>();
+        if (hp != null) hp.SetMaxHP(MaxHPFor(level), fillHP);
+        var c = GetComponent<SeriaController>();
+        if (c != null) { c.attackDamage = AttackFor(level); c.heavyDamage = AttackFor(level); }   // 기본 공격 · 강공격
+    }
+
+    void Start() { ApplyStats(false); }
 
     int lastLevel;
 
@@ -67,6 +93,7 @@ public class PlayerLevel : MonoBehaviour
     {
         int old = level;
         level = Mathf.Clamp(lv, 1, maxLevel); exp = 0;
+        ApplyStats(true);
         if (level > old) for (int l = old + 1; l <= level; l++) OnLevelUp?.Invoke(l);
         lastLevel = level;
         OnChanged?.Invoke();
@@ -75,7 +102,7 @@ public class PlayerLevel : MonoBehaviour
     void LevelUpFx()
     {
         DamagePopup.ShowText(transform.position + new Vector3(0, 2.1f, 0), "LEVEL UP!", new Color(1f, 0.85f, 0.3f));
-        if (healOnLevelUp) { var hp = GetComponent<PlayerHealth>(); if (hp != null) hp.Heal(hp.maxHP); }
+        ApplyStats(healOnLevelUp);
         OnLevelUp?.Invoke(level);
     }
 

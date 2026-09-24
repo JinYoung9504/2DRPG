@@ -17,7 +17,7 @@ public class SlimeEnemy : MonoBehaviour
     [Header("이동")]
     public float wanderSpeed = 0.8f;
     public float wanderRadius = 1.5f;     // 평소 어슬렁거리는 범위 (0이면 가만히)
-    public float chaseSpeed = 2.8f;
+    public float approachSpeed = 1.4f;    // 플레이어에게 다가오는 속도 (이전 2.8 → 절반)
     public float returnSpeed = 1.5f;
 
     [Header("덮치기 (달려들기)")]
@@ -145,7 +145,7 @@ public class SlimeEnemy : MonoBehaviour
                     break;
 
                 case State.Chase:
-                    moveX = Mathf.Sign(dx); speed = chaseSpeed;
+                    moveX = Mathf.Sign(dx); speed = approachSpeed;
                     if (grounded && dist <= lungeRange && Time.time >= nextLungeTime)
                     {
                         lunging = true;

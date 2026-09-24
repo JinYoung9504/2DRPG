@@ -25,7 +25,7 @@ public class PlayerHealth : MonoBehaviour
     void Awake()
     {
         sr = GetComponent<SpriteRenderer>();
-        CurrentHP = CarryHP > 0f ? Mathf.Min(CarryHP, maxHP) : maxHP;
+        CurrentHP = CarryHP > 0f ? CarryHP : maxHP;   // 최대 체력은 PlayerLevel 이 레벨에 맞춰 다시 정함
         CarryHP = -1f;
     }
 
@@ -36,6 +36,13 @@ public class PlayerHealth : MonoBehaviour
         invincibleUntil = Time.time + hitInvincibleTime;
         if (IsDead) OnDied?.Invoke();
         else OnDamaged?.Invoke();
+    }
+
+    // 최대 체력 변경 (레벨업 등). fill = true 면 체력을 가득 채움
+    public void SetMaxHP(float newMax, bool fill)
+    {
+        maxHP = Mathf.Max(1f, newMax);
+        CurrentHP = fill ? maxHP : Mathf.Min(CurrentHP, maxHP);
     }
 
     public void Heal(float amount)
