@@ -1,11 +1,11 @@
 // 세리아 조작 스크립트
 // ─────────────────────────────────────────────
-//  ← / →  : 이동
+//  ← / →  : 이동 (같은 방향 두 번 빠르게 → 대쉬)
 //  Alt    : 점프 (짧게 누르면 낮게, 길게 누르면 높게)
 //  Ctrl   : 기본 공격 (공격 중에 한 번 더 누르면 강공격으로 이어짐)
 //  Space  : 강공격
-//  Shift  : 스킬
-//  H / X  : 피격 / 사망 테스트
+//  Shift  : 스킬 (쿨타임 3초)
+//  H : 피격 테스트(-10)   X : 사망 테스트   R : 부활 테스트
 //  ※ 모든 키는 Inspector 창에서 바꿀 수 있습니다.
 // ─────────────────────────────────────────────
 using System;
@@ -29,6 +29,7 @@ public class SeriaController : MonoBehaviour
     public KeyCode skillKey = KeyCode.LeftShift;
     public KeyCode hitTestKey = KeyCode.H;
     public KeyCode dieTestKey = KeyCode.X;
+    public KeyCode reviveTestKey = KeyCode.R;
 
     [Header("이동")]
     public float moveSpeed = 4f;          // 초당 이동 거리
@@ -42,13 +43,30 @@ public class SeriaController : MonoBehaviour
     public float jumpBufferTime = 0.1f;    // 착지 직전에 누른 점프를 기억하는 시간
     public LayerMask groundLayer = ~0;
 
+    [Header("스킬")]
+    public float skillCooldown = 3f;
+    public float SkillCooldownRemaining => Mathf.Max(0f, skillReadyTime - Time.time);
+    float skillReadyTime;
+
+    [Header("대쉬 (방향키 두 번 연타)")]
+    public float doubleTapTime = 0.25f;   // 두 번 누르는 간격 허용 시간
+    public float dashSpeed = 13f;
+    public float dashDuration = 0.18f;
+    public float dashCooldown = 0.4f;
+    public bool allowAirDash = true;      // 공중 대쉬 허용 (점프 1회당 1번)
+    public Color afterImageColor = new Color(1f, 0.55f, 0.65f, 0.6f);
+
     [Header("이펙트 (비워두면 표시 안 함)")]
     public Sprite slashFx;
     public Sprite skillFx;
 
     Rigidbody2D rb; Animator anim; SpriteRenderer sr; Collider2D col;
+    PlayerHealth health;
     bool dead;
     float coyoteCounter, jumpBufferCounter;
+    // 대쉬 상태
+    float lastTapTime = -1f; int lastTapDir;
+    bool dashing, airDashUsed; float dashEndTime, nextDashTime, nextGhostTime; int dashDir;
 
 #if UNITY_6000_0_OR_NEWER
     Vector2 Vel { get => rb.linearVelocity; set => rb.linearVelocity = value; }
@@ -62,6 +80,26 @@ public class SeriaController : MonoBehaviour
         anim = GetComponent<Animator>();
         sr = GetComponent<SpriteRenderer>();
         col = GetComponent<Collider2D>();
+
+        health = GetComponent<PlayerHealth>();
+        if (health == null) health = gameObject.AddComponent<PlayerHealth>();
+        health.OnDamaged += () => { if (dashing) EndDash(); anim.SetTrigger("Hit"); };
+        health.OnDied += Die;
+        health.OnRevived += Revive;
+    }
+
+    void Die()
+    {
+        if (dashing) EndDash();
+        dead = true; anim.speed = 1f; Vel = Vector2.zero;
+        anim.SetTrigger("Die");
+    }
+
+    void Revive()
+    {
+        dead = false; anim.speed = 1f;
+        anim.ResetTrigger("Die"); anim.ResetTrigger("Hit");
+        anim.Play("Idle", 0, 0f);
     }
 
     // 발밑에 바닥이 있는지 확인
@@ -101,7 +139,7 @@ public class SeriaController : MonoBehaviour
     }
     static bool Down(KeyCode k) { var c = K(k); return c != null && c.wasPressedThisFrame; }
     static bool Hold(KeyCode k) { var c = K(k); return c != null && c.isPressed; }
-    static bool Up(KeyCode k) { var c = K(k); return c != null && c.wasReleasedThisFrame; }
+    static bool Up(KeyCode k)   { var c = K(k); return c != null && c.wasReleasedThisFrame; }
 #else
     static bool Down(KeyCode k) => Input.GetKeyDown(k);
     static bool Hold(KeyCode k) => Input.GetKey(k);
@@ -141,10 +179,35 @@ public class SeriaController : MonoBehaviour
 
     void Update()
     {
-        if (dead) return;
+        if (dead)
+        {
+            if (Pressed(reviveTestKey)) health.Revive();
+            return;
+        }
 
         bool grounded = IsGrounded();
         bool busy = Busy();
+
+        if (grounded) airDashUsed = false;
+
+        // ── 대쉬 중 ──
+        if (dashing)
+        {
+            Vel = new Vector2(dashDir * dashSpeed, 0f);          // 대쉬 중엔 중력 무시
+            if (Time.time >= nextGhostTime) { SpawnAfterImage(); nextGhostTime = Time.time + 0.03f; }
+            anim.SetFloat("Speed", 1f); anim.SetFloat("VelY", 0f); anim.SetBool("Grounded", grounded);
+            if (Time.time >= dashEndTime) EndDash();
+            return;
+        }
+
+        // ── 방향키 두 번 연타 → 대쉬 ──
+        int tap = Pressed(leftKey) ? -1 : Pressed(rightKey) ? 1 : 0;
+        if (tap != 0)
+        {
+            bool doubleTap = tap == lastTapDir && Time.time - lastTapTime <= doubleTapTime;
+            lastTapDir = tap; lastTapTime = Time.time;
+            if (doubleTap && CanDash(grounded, busy)) { StartDash(tap, grounded); return; }
+        }
 
         // ── 좌우 입력 ──
         float x = 0;
@@ -179,11 +242,16 @@ public class SeriaController : MonoBehaviour
         // ── 공격 ──
         if (Pressed(attackKey, attackKey2)) anim.SetTrigger("Attack");
         if (Pressed(heavyKey)) { anim.SetTrigger("Heavy"); StartCoroutine(Fx(slashFx, 0.25f, new Vector2(0.6f, 0.7f), 0.25f)); }
-        if (Pressed(skillKey)) { anim.SetTrigger("Skill"); StartCoroutine(Fx(skillFx, 0.5f, new Vector2(1.0f, 0.7f), 0.4f)); }
+        if (Pressed(skillKey) && !busy && SkillCooldownRemaining <= 0f)   // 쿨타임이 다 차야 사용 가능
+        {
+            skillReadyTime = Time.time + skillCooldown;
+            anim.SetTrigger("Skill");
+            StartCoroutine(Fx(skillFx, 0.5f, new Vector2(1.0f, 0.7f), 0.4f));
+        }
 
         // ── 테스트용 ──
-        if (Pressed(hitTestKey)) anim.SetTrigger("Hit");
-        if (Pressed(dieTestKey)) { anim.SetTrigger("Die"); dead = true; Vel = Vector2.zero; }
+        if (Pressed(hitTestKey)) health.TakeDamage(10f);
+        if (Pressed(dieTestKey)) health.TakeDamage(health.maxHP);
 
         dbgX = x; dbgGround = grounded; dbgBusy = busy;
 
@@ -191,6 +259,58 @@ public class SeriaController : MonoBehaviour
         anim.SetFloat("Speed", Mathf.Abs(x));
         anim.SetFloat("VelY", Vel.y);
         anim.SetBool("Grounded", grounded);
+    }
+
+    // ── 대쉬 ──
+    bool CanDash(bool grounded, bool busy)
+    {
+        if (busy || Time.time < nextDashTime) return false;
+        if (!grounded && (!allowAirDash || airDashUsed)) return false;
+        return true;
+    }
+
+    void StartDash(int dir, bool grounded)
+    {
+        dashing = true; dashDir = dir;
+        dashEndTime = Time.time + dashDuration;
+        nextGhostTime = 0f;
+        if (!grounded) airDashUsed = true;
+        sr.flipX = dir < 0;
+        lastTapTime = -1f;                 // 세 번 연타로 연속 대쉬 방지
+        anim.Play("Walk", 0, 0f);          // 걷기 동작을 빠르게 재생
+        anim.speed = 2.5f;
+    }
+
+    void EndDash()
+    {
+        dashing = false;
+        nextDashTime = Time.time + dashCooldown;
+        anim.speed = 1f;
+        Vel = new Vector2(dashDir * moveSpeed, 0f);   // 부드럽게 감속
+    }
+
+    // 잔상: 현재 모습을 복사해 색을 입히고 서서히 사라지게
+    void SpawnAfterImage()
+    {
+        var g = new GameObject("AfterImage");
+        g.transform.SetPositionAndRotation(transform.position, transform.rotation);
+        g.transform.localScale = transform.localScale;
+        var r = g.AddComponent<SpriteRenderer>();
+        r.sprite = sr.sprite; r.flipX = sr.flipX;
+        r.sortingLayerID = sr.sortingLayerID; r.sortingOrder = sr.sortingOrder - 1;
+        r.color = afterImageColor;
+        StartCoroutine(FadeOut(r, 0.25f));
+    }
+
+    IEnumerator FadeOut(SpriteRenderer r, float life)
+    {
+        Color c0 = r.color;
+        for (float t = 0; t < life; t += Time.deltaTime)
+        {
+            r.color = new Color(c0.r, c0.g, c0.b, c0.a * (1 - t / life));
+            yield return null;
+        }
+        Destroy(r.gameObject);
     }
 
     // 간단한 이펙트: delay 후 캐릭터 앞에 스프라이트를 띄우고 서서히 사라지게

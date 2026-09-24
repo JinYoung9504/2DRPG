@@ -13,7 +13,7 @@ public class SeriaSpriteImporter : AssetPostprocessor
     const float PivotY = 8f / CellH;        // 발 위치
 
     static bool IsSheet(string p) => p.Replace('\\', '/').Contains("/Seria/Sprites/Seria_");
-    static bool IsFx(string p) => p.Replace('\\', '/').Contains("/Seria/Effects/");
+    static bool IsFx(string p) { p = p.Replace('\\', '/'); return p.Contains("/Seria/Effects/") || p.Contains("/Seria/UI/"); }
 
     void OnPreprocessTexture()
     {
