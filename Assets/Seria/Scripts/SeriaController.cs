@@ -5,6 +5,7 @@
 //  Ctrl   : 기본 공격 (공격 중에 한 번 더 누르면 강공격으로 이어짐)
 //  Space  : 강공격
 //  Shift  : 스킬 (쿨타임 3초)
+//  A / S / D : 검기(5레벨) / 번개(10레벨) / 메테오(20레벨)  → SeriaSkills
 //  H : 피격 테스트(-10)   X : 사망 테스트   R : 부활 테스트
 //  ※ 모든 키는 Inspector 창에서 바꿀 수 있습니다.
 //  ※ 모바일에서는 화면 터치 버튼(TouchControls)으로 같은 동작을 합니다.
@@ -110,6 +111,9 @@ public class SeriaController : MonoBehaviour
         health.OnDamaged += () => { if (dashing) EndDash(); anim.SetTrigger("Hit"); };
         health.OnDied += Die;
         health.OnRevived += Revive;
+
+        // 레벨 / 레벨 스킬 (없으면 자동 추가)
+        if (GetComponent<SeriaSkills>() == null) gameObject.AddComponent<SeriaSkills>();
     }
 
     void Die()
@@ -171,6 +175,7 @@ public class SeriaController : MonoBehaviour
 #endif
     // 키보드 + 화면 터치 버튼(VirtualInput) 둘 다 확인
     static bool AnyDown(KeyCode k) => k != KeyCode.None && (Down(k) | VirtualInput.Down(k));
+    public static bool KeyDown(KeyCode k) => AnyDown(k);   // 다른 스크립트(스킬)에서 사용
     static bool AnyHold(KeyCode k) => k != KeyCode.None && (Hold(k) || VirtualInput.Held(k));
     static bool AnyUp(KeyCode k)   => k != KeyCode.None && (Up(k) | VirtualInput.Up(k));
     bool Pressed(KeyCode a, KeyCode b = KeyCode.None) => AnyDown(a) | AnyDown(b);
@@ -315,6 +320,16 @@ public class SeriaController : MonoBehaviour
         if (squashT >= 1f) transform.localScale = baseScale;
     }
 
+    // ── 다른 스크립트(SeriaSkills)용 ──
+    public bool CanAct => !dead && !dashing && !Busy();
+    float suppressHitUntil;
+    // 스킬 시전 모션만 재생 (근접 공격 판정은 하지 않음)
+    public void PlayCastAnimation(string trigger)
+    {
+        suppressHitUntil = Time.time + 0.5f;
+        anim.SetTrigger(trigger);
+    }
+
     // ── 공격 판정 ──
     // 공격 애니메이션이 "시작되는 순간"을 감지해서, 정해진 시간 뒤 앞쪽 범위에 있는 적에게 데미지
     int lastStateHash;
@@ -324,6 +339,8 @@ public class SeriaController : MonoBehaviour
         var info = anim.GetCurrentAnimatorStateInfo(0);
         if (info.fullPathHash == lastStateHash) return;
         lastStateHash = info.fullPathHash;
+        bool isAttack = info.IsName("Attack1") || info.IsName("Attack2") || info.IsName("Skill");
+        if (isAttack && Time.time < suppressHitUntil) { suppressHitUntil = 0f; return; }   // 스킬 시전 모션
         if (info.IsName("Attack1")) StartCoroutine(DoHit(attackBox, attackDamage));
         else if (info.IsName("Attack2")) StartCoroutine(DoHit(heavyBox, heavyDamage));
         else if (info.IsName("Skill")) StartCoroutine(DoHit(skillBox, skillDamage));

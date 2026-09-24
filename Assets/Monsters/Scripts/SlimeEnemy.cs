@@ -29,6 +29,9 @@ public class SlimeEnemy : MonoBehaviour
     public float attackDamage = 1f;       // 몸에 닿았을 때 플레이어가 받는 데미지
     public Vector2 knockback = new Vector2(6f, 4f);
 
+    [Header("보상")]
+    public int expReward = 1;          // 처치 시 경험치
+
     [Header("그림 방향")]
     public bool spriteFacesLeft = true;   // 슬라임 원본 그림은 왼쪽을 봄
 
@@ -60,6 +63,7 @@ public class SlimeEnemy : MonoBehaviour
 
         health = GetComponent<EnemyHealth>();
         if (health == null) health = gameObject.AddComponent<EnemyHealth>();
+        health.OnDied += () => { if (PlayerLevel.Instance != null) PlayerLevel.Instance.AddExp(expReward); };
         health.OnHurt += dir =>
         {
             stunUntil = Time.time + 0.35f;          // 맞으면 잠깐 멈칫

@@ -66,6 +66,16 @@ public class TouchControls : MonoBehaviour
         Btn(cgo.transform, "Heavy", heavy, player.heavyKey, R, new Vector2(-430, 90), 150);
         var sk = Btn(cgo.transform, "Skill", skill, player.skillKey, R, new Vector2(-210, 190), 150);
 
+        // 레벨 스킬 (검기 A / 번개 S / 메테오 D) — 우측 위쪽 줄
+        var lvSkills = player.GetComponent<SeriaSkills>();
+        if (lvSkills != null)
+        {
+            var all = lvSkills.All;
+            string[] icons = { "Skills/Icon_SwordWave", "Skills/Icon_Lightning", "Skills/Icon_Meteor" };
+            for (int i = 0; i < all.Length; i++)
+                Btn(cgo.transform, all[i].name, Resources.Load<Sprite>(icons[i]), all[i].key, R, new Vector2(-510 + 150 * i, 360), 120);
+        }
+
         // 스킬 버튼 위 쿨타임 표시
         var cd = new GameObject("Cooldown", typeof(RectTransform)).GetComponent<RectTransform>();
         cd.SetParent(sk, false); cd.anchorMin = Vector2.zero; cd.anchorMax = Vector2.one;

@@ -52,6 +52,7 @@
     <Compile Include="Assets\Title\Scripts\TitleScreen.cs" />
     <Compile Include="Assets\Title\Scripts\SaveSystem.cs" />
     <Compile Include="Assets\Title\Scripts\UIButtonFx.cs" />
+    <Compile Include="Assets\Skills\Scripts\SkillEffects.cs" />
     <Compile Include="Assets\Maps\Scripts\SceneTransition.cs" />
     <Compile Include="Assets\Monsters\Scripts\BoarEnemy.cs" />
     <Compile Include="Assets\Backgrounds\Scripts\CameraFollow2D.cs" />
@@ -59,6 +60,8 @@
     <Compile Include="Assets\Backgrounds\Scripts\StageBounds.cs" />
     <Compile Include="Assets\Title\Scripts\SaveButton.cs" />
     <Compile Include="Assets\Title\Scripts\Toast.cs" />
+    <Compile Include="Assets\Skills\Scripts\PlayerLevel.cs" />
+    <Compile Include="Assets\Skills\Scripts\SeriaSkills.cs" />
     <Compile Include="Assets\Seria\Scripts\VirtualInput.cs" />
     <Compile Include="Assets\Maps\Scripts\MapPortal.cs" />
     <Compile Include="Assets\Seria\Scripts\PlayerHealth.cs" />

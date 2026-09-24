@@ -12,6 +12,8 @@ public class SaveData
     public float x, y;          // 캐릭터 위치
     public float hp;            // 체력
     public bool facingLeft;     // 바라보는 방향
+    public int level = 1;       // 레벨
+    public int exp;             // 경험치
     public string savedAt;      // 저장 시각
 }
 
@@ -36,6 +38,8 @@ public static class SaveSystem
             hp = hp != null ? hp.CurrentHP : 100f,
             facingLeft = FacingLeft(player),
             savedAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+            level = PlayerLevel.Instance != null ? PlayerLevel.Instance.level : 1,
+            exp = PlayerLevel.Instance != null ? PlayerLevel.Instance.exp : 0,
         };
         try
         {

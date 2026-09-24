@@ -30,6 +30,9 @@ public class BoarEnemy : MonoBehaviour
     public Vector2 chargeKnockback = new Vector2(9f, 5f);
     public Vector2 touchKnockback = new Vector2(4f, 2f);
 
+    [Header("보상")]
+    public int expReward = 3;          // 처치 시 경험치
+
     [Header("그림 방향")]
     public bool spriteFacesLeft = false;  // 멧돼지 원본 그림은 오른쪽을 봄
 
@@ -61,6 +64,7 @@ public class BoarEnemy : MonoBehaviour
 
         health = GetComponent<EnemyHealth>();
         if (health == null) health = gameObject.AddComponent<EnemyHealth>();
+        health.OnDied += () => { if (PlayerLevel.Instance != null) PlayerLevel.Instance.AddExp(expReward); };
         health.OnHurt += dir =>
         {
             if (state == State.Charge) return;          // 돌진 중엔 안 밀림
