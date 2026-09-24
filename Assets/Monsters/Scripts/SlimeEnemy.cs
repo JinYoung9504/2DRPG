@@ -53,6 +53,7 @@ public class SlimeEnemy : MonoBehaviour
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>(); anim = GetComponent<Animator>(); sr = GetComponent<SpriteRenderer>();
+        rb.interpolation = RigidbodyInterpolation2D.Interpolate;   // 떨림 방지
         foreach (var c in GetComponents<Collider2D>()) if (!c.isTrigger) body = c;
         homeX = wanderTarget = transform.position.x;
         nextWanderTime = Time.time + Random.Range(1f, 3f);

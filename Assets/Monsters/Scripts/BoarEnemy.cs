@@ -53,6 +53,7 @@ public class BoarEnemy : MonoBehaviour
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>(); anim = GetComponent<Animator>(); sr = GetComponent<SpriteRenderer>();
+        rb.interpolation = RigidbodyInterpolation2D.Interpolate;   // 떨림 방지
         foreach (var c in GetComponents<Collider2D>()) if (!c.isTrigger) body = c;
         baseColor = sr.color;
         homeX = wanderTarget = transform.position.x;

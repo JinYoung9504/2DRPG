@@ -34,8 +34,14 @@ public class SeriaController : MonoBehaviour
 
     [Header("이동")]
     public float moveSpeed = 4f;          // 초당 이동 거리
-    public float acceleration = 40f;      // 클수록 즉시 최고속도에 도달
+    public float acceleration = 30f;      // 출발할 때 가속 (클수록 즉시 최고속도)
+    public float deceleration = 45f;      // 멈출 때 감속
+    public float turnAcceleration = 60f;  // 반대 방향으로 꺾을 때
     public float airControl = 0.7f;       // 공중에서 방향 조절 정도 (0~1)
+
+    [Header("부드러움 연출")]
+    public bool squashStretch = true;     // 점프 시 살짝 늘어나고 착지 시 살짝 눌림
+    public float squashAmount = 0.12f;
 
     [Header("점프")]
     public float jumpForce = 11f;
@@ -74,6 +80,7 @@ public class SeriaController : MonoBehaviour
 
     Rigidbody2D rb; Animator anim; SpriteRenderer sr; Collider2D col;
     PlayerHealth health;
+    Vector3 baseScale; float squashT = 1f, squashSign; bool wasGrounded = true;
     bool dead;
     float coyoteCounter, jumpBufferCounter;
     // 대쉬 상태
@@ -92,6 +99,11 @@ public class SeriaController : MonoBehaviour
         anim = GetComponent<Animator>();
         sr = GetComponent<SpriteRenderer>();
         col = GetComponent<Collider2D>();
+
+        // 물리(50회/초)와 화면(60~144회/초) 사이를 보간해 떨림 제거
+        rb.interpolation = RigidbodyInterpolation2D.Interpolate;
+        rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
+        baseScale = transform.localScale;
 
         health = GetComponent<PlayerHealth>();
         if (health == null) health = gameObject.AddComponent<PlayerHealth>();
@@ -240,14 +252,17 @@ public class SeriaController : MonoBehaviour
 
         Vector2 v = Vel;
 
-        // ── 이동 (가속도 적용) ──
+        // ── 이동 (출발·정지·방향전환 가속도를 따로 적용) ──
         float control = grounded ? 1f : airControl;
-        v.x = Mathf.MoveTowards(v.x, x * moveSpeed, acceleration * control * Time.deltaTime);
+        float target = x * moveSpeed;
+        float rate = x == 0 ? deceleration : (Mathf.Sign(target) != Mathf.Sign(v.x) && Mathf.Abs(v.x) > 0.1f ? turnAcceleration : acceleration);
+        v.x = Mathf.MoveTowards(v.x, target, rate * control * Time.deltaTime);
 
         // ── 점프 ──
         if (jumpBufferCounter > 0 && coyoteCounter > 0 && !busy)
         {
             v.y = jumpForce;
+            Squash(-1f);                                  // 점프: 위로 늘어남
             jumpBufferCounter = 0;
             coyoteCounter = 0;
         }
@@ -273,10 +288,31 @@ public class SeriaController : MonoBehaviour
 
         dbgX = x; dbgGround = grounded; dbgBusy = busy;
 
+        // ── 착지 감지 → 살짝 눌림 ──
+        if (grounded && !wasGrounded) Squash(1f);
+        wasGrounded = grounded;
+
         // ── 애니메이터에 상태 전달 ──
         anim.SetFloat("Speed", Mathf.Abs(x));
         anim.SetFloat("VelY", Vel.y);
         anim.SetBool("Grounded", grounded);
+
+        // 걷기 동작 재생 속도를 실제 이동 속도에 맞춤 (출발·정지 때 발 미끄러짐 방지)
+        if (anim.GetCurrentAnimatorStateInfo(0).IsName("Walk"))
+            anim.speed = Mathf.Clamp(Mathf.Abs(Vel.x) / moveSpeed, 0.5f, 1.2f);
+        else if (anim.speed != 1f) anim.speed = 1f;
+    }
+
+    // ── 스쿼시 & 스트레치 (sign: 1 = 눌림, -1 = 늘어남) ──
+    void Squash(float sign) { if (squashStretch) { squashT = 0f; squashSign = sign; } }
+
+    void LateUpdate()
+    {
+        if (!squashStretch || squashT >= 1f) return;
+        squashT = Mathf.Min(1f, squashT + Time.deltaTime / 0.18f);
+        float k = Mathf.Sin(squashT * Mathf.PI) * squashAmount * squashSign;   // 0 → 최대 → 0
+        transform.localScale = new Vector3(baseScale.x * (1f + k), baseScale.y * (1f - k), baseScale.z);
+        if (squashT >= 1f) transform.localScale = baseScale;
     }
 
     // ── 공격 판정 ──

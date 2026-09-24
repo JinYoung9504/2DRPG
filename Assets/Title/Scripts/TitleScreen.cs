@@ -1,0 +1,105 @@
+// 타이틀 화면: 그림을 화면에 꽉 채우고, 그림 속 버튼 위치에 투명 버튼을 겹쳐 놓음
+//  시작하기 → 첫 번째 맵으로 / 이어하기 → 마지막 저장 위치에서 계속
+using System.Collections;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class TitleScreen : MonoBehaviour
+{
+    public string firstScene = "Map1_Slime";
+
+    [Header("그림")]
+    public Sprite background;
+    public Sprite backgroundBlur;          // 비워두면 Resources/Title_BG_Blur 사용
+    public Sprite startMask, continueMask;
+    public Sprite toastNoSave;
+
+    // 원본 그림(1536x1024) 기준 버튼 위치 (픽셀, 좌상단 기준)
+    static readonly Rect StartRect = new Rect(750, 518, 477, 108);
+    static readonly Rect ContinueRect = new Rect(802, 656, 374, 76);
+    const float ArtW = 1536f, ArtH = 1024f;
+
+    Image fade; bool leaving;
+
+    void Start()
+    {
+        UIHelper.EnsureEventSystem();
+        Build();
+        StartCoroutine(FadeIn());
+    }
+
+    void Build()
+    {
+        var cgo = new GameObject("Title Canvas", typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
+        cgo.transform.SetParent(transform, false);
+        var canvas = cgo.GetComponent<Canvas>(); canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+        var sc = cgo.GetComponent<CanvasScaler>(); sc.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+        sc.referenceResolution = new Vector2(1920, 1080);
+
+        // 검은 바탕
+        var bg = UIHelper.Stretch("Black", cgo.transform).gameObject.AddComponent<Image>(); bg.color = Color.black;
+
+        // 뒤쪽: 흐리고 어두운 그림으로 화면 전체를 채움 (남는 여백용)
+        if (backgroundBlur == null) backgroundBlur = Resources.Load<Sprite>("Title_BG_Blur");
+        if (backgroundBlur != null)
+        {
+            var blur = UIHelper.Stretch("Blur Fill", cgo.transform);
+            var bfit = blur.gameObject.AddComponent<AspectRatioFitter>();
+            bfit.aspectMode = AspectRatioFitter.AspectMode.EnvelopeParent; bfit.aspectRatio = ArtW / ArtH;
+            var bimg = blur.gameObject.AddComponent<Image>(); bimg.sprite = backgroundBlur; bimg.raycastTarget = false;
+        }
+
+        // 앞쪽: 원본 그림을 잘리지 않게 화면 안에 전부 표시
+        var art = UIHelper.Stretch("Art", cgo.transform);
+        var fit = art.gameObject.AddComponent<AspectRatioFitter>();
+        fit.aspectMode = AspectRatioFitter.AspectMode.FitInParent; fit.aspectRatio = ArtW / ArtH;
+        var artImg = art.gameObject.AddComponent<Image>(); artImg.sprite = background; artImg.raycastTarget = false;
+
+        var start = MakeButton(art, "Start", StartRect, startMask);
+        start.idlePulse = 0.08f;
+        start.onClick = OnStart;
+
+        var cont = MakeButton(art, "Continue", ContinueRect, continueMask);
+        cont.disabledLook = !SaveSystem.HasSave;
+        cont.onClick = OnContinue;
+
+        fade = UIHelper.Stretch("Fade", cgo.transform).gameObject.AddComponent<Image>();
+        fade.color = Color.black; fade.raycastTarget = false;
+    }
+
+    UIButtonFx MakeButton(RectTransform art, string name, Rect px, Sprite mask)
+    {
+        var rt = new GameObject("Btn " + name, typeof(RectTransform)).GetComponent<RectTransform>();
+        rt.SetParent(art, false);
+        // 그림 크기에 비례해 따라가도록 앵커를 그림 비율 좌표로 지정
+        rt.anchorMin = new Vector2(px.xMin / ArtW, 1f - px.yMax / ArtH);
+        rt.anchorMax = new Vector2(px.xMax / ArtW, 1f - px.yMin / ArtH);
+        rt.offsetMin = rt.offsetMax = Vector2.zero;
+        var img = rt.gameObject.AddComponent<Image>(); img.sprite = mask; img.color = new Color(1, 1, 1, 0);
+        return rt.gameObject.AddComponent<UIButtonFx>();
+    }
+
+    IEnumerator FadeIn()
+    {
+        for (float t = 1f; t > 0f; t -= Time.unscaledDeltaTime / 0.8f) { fade.color = new Color(0, 0, 0, t); yield return null; }
+        fade.color = new Color(0, 0, 0, 0);
+    }
+
+    void OnStart()
+    {
+        if (leaving) return;
+        leaving = true;
+        PlayerHealth.CarryHP = -1f;                 // 새 게임: 체력 가득
+        SceneTransition.Go(firstScene, null);
+    }
+
+    void OnContinue()
+    {
+        if (leaving) return;
+        var data = SaveSystem.Load();
+        if (data == null || string.IsNullOrEmpty(data.scene)) { Toast.Show(toastNoSave); return; }
+        leaving = true;
+        PlayerHealth.CarryHP = data.hp;
+        SceneTransition.GoToPosition(data.scene, new Vector3(data.x, data.y, 0), data.facingLeft);
+    }
+}

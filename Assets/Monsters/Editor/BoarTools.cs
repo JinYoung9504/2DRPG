@@ -55,7 +55,7 @@ public static class BoarTools
         return clip;
     }
 
-    static AnimatorController BuildController()
+    public static AnimatorController BuildController()
     {
         string path = Dir + "Boar.controller";
         AssetDatabase.DeleteAsset(path);
@@ -71,7 +71,7 @@ public static class BoarTools
         return ctrl;
     }
 
-    static GameObject CreateBoar(Vector3 pos, AnimatorController ctrl)
+    public static GameObject CreateBoar(Vector3 pos, AnimatorController ctrl)
     {
         var go = new GameObject("Boar");
         go.transform.position = pos;
@@ -85,14 +85,16 @@ public static class BoarTools
         body.direction = CapsuleDirection2D.Horizontal; body.size = new Vector2(1.6f, 1.0f); body.offset = new Vector2(0, 0.5f);
         var hit = go.AddComponent<BoxCollider2D>();
         hit.isTrigger = true; hit.size = new Vector2(1.5f, 0.9f); hit.offset = new Vector2(0, 0.5f);
-        var hp = go.AddComponent<EnemyHealth>(); hp.maxHP = 20f; hp.hpBarOffset = new Vector2(0, 1.55f);
+        var hp = go.AddComponent<EnemyHealth>(); hp.maxHP = 15f; hp.hpBarOffset = new Vector2(0, 1.55f);
         go.AddComponent<BoarEnemy>();
         Undo.RegisterCreatedObjectUndo(go, "Create Boar");
         return go;
     }
 
     [MenuItem("Tools/Monsters/멧돼지 배치 (Spawn Boars)")]
-    public static void SpawnBoars()
+    public static void SpawnBoars() => SpawnAt(new[] { -12f, -22f });
+
+    public static void SpawnAt(float[] xs)
     {
 #if UNITY_2023_1_OR_NEWER
         var olds = Object.FindObjectsByType<BoarEnemy>(FindObjectsSortMode.None);
@@ -101,9 +103,9 @@ public static class BoarTools
 #endif
         foreach (var o in olds) Undo.DestroyObjectImmediate(o.gameObject);
         var ctrl = BuildController();
-        foreach (var x in new[] { -12f, -22f })
+        foreach (var x in xs)
             CreateBoar(new Vector3(x, FeetY + 0.05f, 0), ctrl);
-        Debug.Log("멧돼지 2마리 배치 완료 (x = -12, -22, 마을 왼쪽). Scene 창에서 끌어서 위치를 바꿀 수 있습니다.");
+        Debug.Log($"멧돼지 {xs.Length}마리 배치 완료. Scene 창에서 끌어서 위치를 바꿀 수 있습니다.");
     }
 
     [MenuItem("Tools/Monsters/선택 위치에 멧돼지 1마리 추가")]

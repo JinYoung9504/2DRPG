@@ -7,6 +7,8 @@ public class PlayerHealth : MonoBehaviour
     public float maxHP = 100f;
     public float invincibleTime = 0.5f;   // 맞은 뒤 잠깐 무적
 
+    public static float CarryHP = -1f;   // 맵 이동 시 체력 전달용
+
     public float CurrentHP { get; private set; }
     public float Percent => maxHP > 0 ? CurrentHP / maxHP * 100f : 0f;
     public bool IsDead => CurrentHP <= 0f;
@@ -17,7 +19,11 @@ public class PlayerHealth : MonoBehaviour
 
     float invincibleUntil;
 
-    void Awake() { CurrentHP = maxHP; }
+    void Awake()
+    {
+        CurrentHP = CarryHP > 0f ? Mathf.Min(CarryHP, maxHP) : maxHP;
+        CarryHP = -1f;
+    }
 
     public void TakeDamage(float amount)
     {
