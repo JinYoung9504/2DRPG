@@ -80,7 +80,10 @@ public class SeriaHUD : MonoBehaviour
         scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
         scaler.referenceResolution = new Vector2(1920, 1080); scaler.matchWidthOrHeight = 0.5f;
 
-        var root = Rect("BottomLeft", canvasGo.transform, Vector2.zero, new Vector2(30, 30), new Vector2(520, 96));
+        // PC: 좌측 하단 / 모바일(터치 버튼 사용 시): 좌측 상단 (이동 버튼과 겹치지 않게)
+        bool mobile = TouchControls.Active;
+        var root = Rect("HUD Panel", canvasGo.transform, mobile ? new Vector2(0, 1) : Vector2.zero,
+                        mobile ? new Vector2(30, -30) : new Vector2(30, 30), new Vector2(520, 96));
         Img(root, new Color(0, 0, 0, 0.35f));
 
         // 체력바
@@ -109,7 +112,7 @@ public class SeriaHUD : MonoBehaviour
         cdOverlay.fillOrigin = (int)Image.Origin360.Top; cdOverlay.fillClockwise = false; cdOverlay.fillAmount = 0;
         cdText = Txt(Stretch("CD Text", slot), 28, TextAnchor.MiddleCenter);
         var key = Rect("Key", slot, new Vector2(1, 0), new Vector2(-3, 2), new Vector2(70, 22));
-        var keyText = Txt(key, 15, TextAnchor.LowerRight); keyText.text = skillKeyLabel;
+        var keyText = Txt(key, 15, TextAnchor.LowerRight); keyText.text = mobile ? "" : skillKeyLabel;
     }
 
     static Sprite white;

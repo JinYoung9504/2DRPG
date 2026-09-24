@@ -7,6 +7,7 @@
 //  Shift  : 스킬 (쿨타임 3초)
 //  H : 피격 테스트(-10)   X : 사망 테스트   R : 부활 테스트
 //  ※ 모든 키는 Inspector 창에서 바꿀 수 있습니다.
+//  ※ 모바일에서는 화면 터치 버튼(TouchControls)으로 같은 동작을 합니다.
 // ─────────────────────────────────────────────
 using System;
 using System.Collections;
@@ -107,7 +108,7 @@ public class SeriaController : MonoBehaviour
     {
         Vector2 origin = (Vector2)transform.position + Vector2.up * 0.1f;
         foreach (var h in Physics2D.RaycastAll(origin, Vector2.down, 0.2f, groundLayer))
-            if (h.collider != col) return true;
+            if (h.collider != col && !h.collider.isTrigger) return true;   // 몬스터 판정 영역은 바닥 아님
         return false;
     }
 
@@ -145,9 +146,13 @@ public class SeriaController : MonoBehaviour
     static bool Hold(KeyCode k) => Input.GetKey(k);
     static bool Up(KeyCode k)   => Input.GetKeyUp(k);
 #endif
-    bool Pressed(KeyCode a, KeyCode b = KeyCode.None) => Down(a) || (b != KeyCode.None && Down(b));
-    bool Held(KeyCode a, KeyCode b = KeyCode.None) => Hold(a) || (b != KeyCode.None && Hold(b));
-    bool Released(KeyCode a, KeyCode b = KeyCode.None) => Up(a) || (b != KeyCode.None && Up(b));
+    // 키보드 + 화면 터치 버튼(VirtualInput) 둘 다 확인
+    static bool AnyDown(KeyCode k) => k != KeyCode.None && (Down(k) | VirtualInput.Down(k));
+    static bool AnyHold(KeyCode k) => k != KeyCode.None && (Hold(k) || VirtualInput.Held(k));
+    static bool AnyUp(KeyCode k)   => k != KeyCode.None && (Up(k) | VirtualInput.Up(k));
+    bool Pressed(KeyCode a, KeyCode b = KeyCode.None) => AnyDown(a) | AnyDown(b);
+    bool Held(KeyCode a, KeyCode b = KeyCode.None) => AnyHold(a) || AnyHold(b);
+    bool Released(KeyCode a, KeyCode b = KeyCode.None) => AnyUp(a) | AnyUp(b);
 
     void Start()
     {

@@ -52,9 +52,13 @@
     <Compile Include="Assets\Backgrounds\Scripts\CameraFollow2D.cs" />
     <Compile Include="Assets\Seria\Scripts\SeriaController.cs" />
     <Compile Include="Assets\Backgrounds\Scripts\StageBounds.cs" />
+    <Compile Include="Assets\Seria\Scripts\VirtualInput.cs" />
     <Compile Include="Assets\Seria\Scripts\PlayerHealth.cs" />
+    <Compile Include="Assets\Monsters\Scripts\SlimeEnemy.cs" />
     <Compile Include="Assets\Seria\Scripts\SeriaHUD.cs" />
+    <Compile Include="Assets\Seria\Scripts\TouchButton.cs" />
     <Compile Include="Assets\Backgrounds\Scripts\ParallaxFit.cs" />
+    <Compile Include="Assets\Seria\Scripts\TouchControls.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
