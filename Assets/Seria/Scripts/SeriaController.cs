@@ -81,6 +81,7 @@ public class SeriaController : MonoBehaviour
     public float doubleTapTime = 0.25f;   // 두 번 누르는 간격 허용 시간
     public float dashSpeed = 13f;
     public float dashDuration = 0.18f;     // 최소 대쉬 시간 (이후엔 키를 놓을 때까지 계속)
+    public float sustainDashSpeedRatio = 0.5f;   // 키를 누르고 있는 동안의 대쉬 속도 비율
     public float dashCooldown = 0.4f;
     public bool allowAirDash = true;      // 공중 대쉬 허용 (점프 1회당 1번)
     public Color afterImageColor = new Color(1f, 0.55f, 0.65f, 0.6f);
@@ -248,7 +249,8 @@ public class SeriaController : MonoBehaviour
             // 방향키를 누르고 있는 동안 계속 대쉬 (최소 dashDuration 은 유지)
             bool dashHeld = dashDir < 0 ? Held(leftKey) : Held(rightKey);
             float vy = Time.time < dashEndTime ? 0f : Vel.y;   // 처음 순간만 중력 무시, 이후 공중이면 떨어짐
-            Vel = new Vector2(dashDir * dashSpeed, vy);
+            float spd = Time.time < dashEndTime ? dashSpeed : dashSpeed * sustainDashSpeedRatio;   // 지속 대쉬는 절반 속도
+            Vel = new Vector2(dashDir * spd, vy);
             if (Time.time >= nextGhostTime) { SpawnAfterImage(); nextGhostTime = Time.time + 0.05f; }
             anim.SetFloat("Speed", 1f); anim.SetFloat("VelY", vy); anim.SetBool("Grounded", grounded);
             if (Time.time >= dashEndTime && !dashHeld) EndDash();
