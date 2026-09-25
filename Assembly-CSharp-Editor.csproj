@@ -59,6 +59,7 @@
     <Compile Include="Assets\Settings\Editor\SettingsImporter.cs" />
     <Compile Include="Assets\Title\Editor\TitleSetup.cs" />
     <Compile Include="Assets\Backgrounds\Editor\BackgroundImporter.cs" />
+    <Compile Include="Assets\NPC\Editor\NpcTools.cs" />
     <Compile Include="Assets\Maps\Editor\BossMapBuilder.cs" />
     <Compile Include="Assets\Maps\Editor\WorldBuilder.cs" />
     <Compile Include="Assets\Seria\Editor\SeriaHUDBuilder.cs" />

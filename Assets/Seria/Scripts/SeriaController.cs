@@ -8,7 +8,7 @@
 //  A / S / D : 검기(5레벨) / 번개(10레벨) / 메테오(20레벨)  → SeriaSkills
 //  ↓      : 숙이기 (누르고 있는 동안 엎드림 → 날아오는 돌이 머리 위로 지나감)
 //  X      : 방어 (앞에서 오는 공격을 막음, 몸통 박치기를 막으면 패링 → 몬스터 2초 스턴)
-//  H : 피격 테스트(-10)   K : 사망 테스트   R : 부활 테스트
+//  H : 피격 테스트(-10)   K : 사망 테스트 (쓰러지면 GAME OVER → 시작 화면)
 //  ※ 모든 키는 Inspector 창에서 바꿀 수 있습니다.
 //  ※ 모바일에서는 화면 터치 버튼(TouchControls)으로 같은 동작을 합니다.
 // ─────────────────────────────────────────────
@@ -137,6 +137,7 @@ public class SeriaController : MonoBehaviour
         EndPose();
         if (dashing) EndDash();
         dead = true; anim.speed = 1f; Vel = Vector2.zero;
+        GameOverScreen.Show();                              // GAME OVER → 시작 화면
         anim.SetTrigger("Die");
     }
 
@@ -230,9 +231,11 @@ public class SeriaController : MonoBehaviour
     void Update()
     {
         if (Time.timeScale == 0f) return;                 // 설정 메뉴 등으로 일시정지 중
-        if (dead)
+        if (dead) return;
+        if (DialogueUI.IsOpen)                             // 대화 중엔 멈춤
         {
-            if (Pressed(reviveTestKey)) health.Revive();
+            if (dashing) EndDash();
+            Vel = new Vector2(0f, Vel.y); anim.SetFloat("Speed", 0f); anim.SetBool("Grounded", IsGrounded());
             return;
         }
 

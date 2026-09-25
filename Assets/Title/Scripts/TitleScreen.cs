@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class TitleScreen : MonoBehaviour
 {
-    public string firstScene = "Map1_Slime";
+    public string firstScene = "Map0_Town";
 
     [Header("그림")]
     public Sprite background;
@@ -91,6 +91,7 @@ public class TitleScreen : MonoBehaviour
         leaving = true;
         PlayerHealth.CarryHP = -1f;                 // 새 게임: 체력 가득
         PlayerLevel.CarryLevel = 1; PlayerLevel.CarryExp = 0;   // 새 게임: 1레벨
+        GameProgress.Reset();
         SceneTransition.Go(firstScene, null);
     }
 
@@ -102,6 +103,7 @@ public class TitleScreen : MonoBehaviour
         leaving = true;
         PlayerHealth.CarryHP = data.hp;
         PlayerLevel.CarryLevel = Mathf.Max(1, data.level); PlayerLevel.CarryExp = data.exp;
+        GameProgress.Load(data.defeatedBosses);
         SceneTransition.GoToPosition(data.scene, new Vector3(data.x, data.y, 0), data.facingLeft);
     }
 }

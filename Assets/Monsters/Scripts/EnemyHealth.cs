@@ -7,6 +7,9 @@ public class EnemyHealth : MonoBehaviour
 {
     public float maxHP = 10f;
     public float respawnTime = 5f;
+    [Header("보스")]
+    public bool isBoss;                    // 보스는 쓰러지면 다시 나타나지 않음 (저장에도 기록)
+    public string bossId = "";
     public float deathAnimTime = 0f;      // 0보다 크면: 납작해지는 기본 연출 대신 AI 가 재생하는 사망 애니메이션을 이 시간만큼 기다린 뒤 사라짐        // 죽은 뒤 이 시간 후 원래 자리에서 다시 등장 (0 이면 리스폰 안 함)
     public Vector2 hpBarOffset = new Vector2(0f, 1.05f);
 
@@ -72,6 +75,13 @@ public class EnemyHealth : MonoBehaviour
         stunRoutine = null;
     }
 
+    void Start()
+    {
+        // 이미 쓰러뜨린 보스는 등장하지 않음
+        if (isBoss && GameProgress.IsBossDefeated(BossKey)) Destroy(gameObject);
+    }
+    string BossKey => string.IsNullOrEmpty(bossId) ? gameObject.name : bossId;
+
     public void TakeDamage(float amount, float attackerX)
     {
         if (IsDead || amount <= 0f) return;
@@ -116,6 +126,7 @@ public class EnemyHealth : MonoBehaviour
         if (sr) sr.enabled = false;
         barRoot.gameObject.SetActive(false);
 
+        if (isBoss) { GameProgress.MarkBossDefeated(BossKey); Destroy(gameObject); yield break; }
         if (respawnTime <= 0f) { Destroy(gameObject); yield break; }
         yield return new WaitForSeconds(respawnTime);
 

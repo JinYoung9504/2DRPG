@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: e573bb6d5dd3a98459d1849b594eac3f
+guid: 4c7c082329420864b835685b44529548
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 7776447882731993084
-    second: Icon_Home_0
+      213: 2576142011656598837
+    second: Dialog_NamePlate_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Icon_Home_0
+      name: Dialog_NamePlate_0
       rect:
         serializedVersion: 2
-        x: 4
-        y: 0
-        width: 124
-        height: 123
+        x: 2
+        y: 1
+        width: 357
+        height: 67
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: cf73490e52e7beb60800000000000000
-      internalID: 7776447882731993084
+      spriteID: 53570c7b28b40c320800000000000000
+      internalID: 2576142011656598837
       vertices: []
       indices: 
       edges: []

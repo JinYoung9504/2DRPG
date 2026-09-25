@@ -51,6 +51,7 @@
   <ItemGroup>
     <Compile Include="Assets\Title\Scripts\TitleScreen.cs" />
     <Compile Include="Assets\Title\Scripts\SaveSystem.cs" />
+    <Compile Include="Assets\Settings\Scripts\GameOverScreen.cs" />
     <Compile Include="Assets\Title\Scripts\UIButtonFx.cs" />
     <Compile Include="Assets\Skills\Scripts\SkillEffects.cs" />
     <Compile Include="Assets\Maps\Scripts\SceneTransition.cs" />
@@ -69,6 +70,8 @@
     <Compile Include="Assets\Seria\Scripts\VirtualInput.cs" />
     <Compile Include="Assets\Maps\Scripts\MapPortal.cs" />
     <Compile Include="Assets\Seria\Scripts\PlayerHealth.cs" />
+    <Compile Include="Assets\NPC\Scripts\DialogueUI.cs" />
+    <Compile Include="Assets\NPC\Scripts\NpcTalker.cs" />
     <Compile Include="Assets\Monsters\Scripts\GolemEnemy.cs" />
     <Compile Include="Assets\Monsters\Scripts\DamagePopup.cs" />
     <Compile Include="Assets\Monsters\Scripts\EnemyHealth.cs" />

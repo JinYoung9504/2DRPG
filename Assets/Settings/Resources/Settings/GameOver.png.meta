@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: e573bb6d5dd3a98459d1849b594eac3f
+guid: dd5d4e0e044edfc41b0498b9e37c7d23
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 7776447882731993084
-    second: Icon_Home_0
+      213: -6899527831451061053
+    second: GameOver_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Icon_Home_0
+      name: GameOver_0
       rect:
         serializedVersion: 2
-        x: 4
-        y: 0
-        width: 124
-        height: 123
+        x: 84
+        y: 33
+        width: 1140
+        height: 197
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: cf73490e52e7beb60800000000000000
-      internalID: 7776447882731993084
+      spriteID: 3c430781ef3ff30a0800000000000000
+      internalID: -6899527831451061053
       vertices: []
       indices: 
       edges: []

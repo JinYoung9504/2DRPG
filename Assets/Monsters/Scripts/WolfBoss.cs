@@ -64,6 +64,7 @@ public class WolfBoss : MonoBehaviour
         health = GetComponent<EnemyHealth>();
         if (health == null) health = gameObject.AddComponent<EnemyHealth>();
         if (health.deathAnimTime <= 0f) health.deathAnimTime = 1.0f;
+        health.isBoss = true; if (string.IsNullOrEmpty(health.bossId)) health.bossId = "CrimsonWolf";   // 중간 보스: 리젠 없음
         restUntil = Time.time + 1.5f;
 
         health.OnHurt += dir => { if (current == Pat.None) anim.Play("Hit", 0, 0f); };

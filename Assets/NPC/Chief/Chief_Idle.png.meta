@@ -1,10 +1,7 @@
 fileFormatVersion: 2
-guid: e573bb6d5dd3a98459d1849b594eac3f
+guid: 39c1c9701e483914ca5a1ecacc60af37
 TextureImporter:
-  internalIDToNameTable:
-  - first:
-      213: 7776447882731993084
-    second: Icon_Home_0
+  internalIDToNameTable: []
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -46,12 +43,12 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 190
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -113,23 +110,89 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Icon_Home_0
+      name: Chief_Idle_0
       rect:
         serializedVersion: 2
-        x: 4
+        x: 0
         y: 0
-        width: 124
-        height: 123
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 280
+        height: 340
+      alignment: 9
+      pivot: {x: 0.5, y: 0.023529412}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: cf73490e52e7beb60800000000000000
-      internalID: 7776447882731993084
+      spriteID: b37e1c80e6b1534c0800000000000000
+      internalID: -4308507309102733509
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Chief_Idle_1
+      rect:
+        serializedVersion: 2
+        x: 280
+        y: 0
+        width: 280
+        height: 340
+      alignment: 9
+      pivot: {x: 0.5, y: 0.023529412}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8b303ecabda1a5d50800000000000000
+      internalID: 6726718524231975864
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Chief_Idle_2
+      rect:
+        serializedVersion: 2
+        x: 560
+        y: 0
+        width: 280
+        height: 340
+      alignment: 9
+      pivot: {x: 0.5, y: 0.023529412}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 582d078dd5c8d0b40800000000000000
+      internalID: 5408133062232953477
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Chief_Idle_3
+      rect:
+        serializedVersion: 2
+        x: 840
+        y: 0
+        width: 280
+        height: 340
+      alignment: 9
+      pivot: {x: 0.5, y: 0.023529412}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a23b0bb057612d450800000000000000
+      internalID: 6111972336258298666
       vertices: []
       indices: 
       edges: []
@@ -138,7 +201,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 5e97eb03825dee720800000000000000
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -147,7 +210,11 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Chief_Idle_0: -4308507309102733509
+      Chief_Idle_1: 6726718524231975864
+      Chief_Idle_2: 5408133062232953477
+      Chief_Idle_3: 6111972336258298666
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

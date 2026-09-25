@@ -1,5 +1,6 @@
 // 저장 / 불러오기 (JSON 파일, PC·모바일 공용 저장 위치 사용)
 using System;
+using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -14,6 +15,7 @@ public class SaveData
     public bool facingLeft;     // 바라보는 방향
     public int level = 1;       // 레벨
     public int exp;             // 경험치
+    public List<string> defeatedBosses = new List<string>();   // 쓰러뜨린 보스
     public string savedAt;      // 저장 시각
 }
 
@@ -40,6 +42,7 @@ public static class SaveSystem
             savedAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
             level = PlayerLevel.Instance != null ? PlayerLevel.Instance.level : 1,
             exp = PlayerLevel.Instance != null ? PlayerLevel.Instance.exp : 0,
+            defeatedBosses = new List<string>(GameProgress.DefeatedBosses),
         };
         try
         {
@@ -64,6 +67,16 @@ public static class SaveSystem
     }
 
     public static void Delete() { if (HasSave) File.Delete(FilePath); }
+}
+
+// 진행 상황 (쓰러뜨린 보스 등) — 새 게임에서 초기화, 이어하기에서 불러옴
+public static class GameProgress
+{
+    public static readonly HashSet<string> DefeatedBosses = new HashSet<string>();
+    public static bool IsBossDefeated(string id) => DefeatedBosses.Contains(id);
+    public static void MarkBossDefeated(string id) => DefeatedBosses.Add(id);
+    public static void Reset() => DefeatedBosses.Clear();
+    public static void Load(List<string> ids) { DefeatedBosses.Clear(); if (ids != null) foreach (var i in ids) DefeatedBosses.Add(i); }
 }
 
 public static class UIHelper
