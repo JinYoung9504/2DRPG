@@ -10,9 +10,9 @@ using UnityEngine;
 [RequireComponent(typeof(Animator), typeof(SpriteRenderer))]
 public class TreeEntEnemy : MonoBehaviour
 {
-    [Header("수치 (임시)")]
-    public float branchDamage = 15f;
-    public float touchDamage = 3f;
+    [Header("수치")]
+    public float branchDamage = 30f;
+    public float touchDamage = 15f;
     public int expReward = 40;
 
     [Header("공격")]

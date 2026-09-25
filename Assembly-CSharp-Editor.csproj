@@ -49,6 +49,7 @@
     <Analyzer Include="C:\Program Files\Unity\Hub\Editor\6000.3.24f1\Editor\Data\Tools\BuildPipeline\Unity.SourceGenerators\Unity.UIToolkit.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Monsters\Editor\MushroomTools.cs" />
     <Compile Include="Assets\Monsters\Editor\BoarTools.cs" />
     <Compile Include="Assets\Monsters\Editor\GolemTools.cs" />
     <Compile Include="Assets\Maps\Editor\MapBuilder.cs" />
@@ -65,6 +66,7 @@
     <Compile Include="Assets\Skills\Editor\SkillFXImporter.cs" />
     <Compile Include="Assets\Seria\Editor\SeriaSpriteImporter.cs" />
     <Compile Include="Assets\Monsters\Editor\SlimeTools.cs" />
+    <Compile Include="Assets\Maps\Editor\WorldReorderBuilder.cs" />
     <Compile Include="Assets\Maps\Editor\ForestMap2Builder.cs" />
   </ItemGroup>
   <ItemGroup>

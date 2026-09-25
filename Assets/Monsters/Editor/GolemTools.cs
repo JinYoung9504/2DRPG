@@ -98,8 +98,8 @@ public static class GolemTools
         rb.sleepMode = RigidbodySleepMode2D.NeverSleep;
         var body = go.AddComponent<CapsuleCollider2D>(); body.size = new Vector2(1.6f, 2.2f); body.offset = new Vector2(0, 1.1f);
         var hit = go.AddComponent<BoxCollider2D>(); hit.isTrigger = true; hit.size = new Vector2(1.5f, 2.1f); hit.offset = new Vector2(0, 1.05f);
-        var hp = go.AddComponent<EnemyHealth>(); hp.maxHP = 30f; hp.hpBarOffset = new Vector2(0, 2.7f);
-        var ge = go.AddComponent<GolemEnemy>(); ge.expReward = 15; ge.touchDamage = 5f; ge.rockDamage = 10f;
+        var hp = go.AddComponent<EnemyHealth>(); hp.maxHP = 50f; hp.hpBarOffset = new Vector2(0, 2.7f);
+        var ge = go.AddComponent<GolemEnemy>(); ge.expReward = 30; ge.touchDamage = 10f; ge.rockDamage = 20f;
         Undo.RegisterCreatedObjectUndo(go, "Create Golem");
         return go;
     }

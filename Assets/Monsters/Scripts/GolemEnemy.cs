@@ -18,7 +18,7 @@ public class GolemEnemy : MonoBehaviour
     public float wanderRadius = 1.5f;
 
     [Header("돌 던지기")]
-    public float rockDamage = 10f;
+    public float rockDamage = 20f;
     public float throwCooldown = 3f;
     public float releaseDelay = 0.4f;     // 던지는 동작 시작 후 돌이 손을 떠나는 시간
     public float throwAnimTime = 0.65f;
@@ -26,8 +26,8 @@ public class GolemEnemy : MonoBehaviour
     public float rockFlightTime = 0.9f;
 
     [Header("기타")]
-    public float touchDamage = 5f;        // 몸에 닿았을 때
-    public int expReward = 15;
+    public float touchDamage = 10f;       // 몸통 박치기
+    public int expReward = 30;
     public bool spriteFacesLeft = false;  // 골렘 원본 그림은 오른쪽을 봄
 
     Rigidbody2D rb; Animator anim; SpriteRenderer sr; Collider2D body; EnemyHealth health;

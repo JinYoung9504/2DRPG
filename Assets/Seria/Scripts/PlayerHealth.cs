@@ -53,14 +53,63 @@ public class PlayerHealth : MonoBehaviour
 
     public void Revive()
     {
+        poisonUntil = 0;
         CurrentHP = maxHP;
         invincibleUntil = 0f;
         OnRevived?.Invoke();
     }
 
+    // ── 독 (지속 데미지): 무적 시간과 상관없이 1초마다 데미지 ──
+    public bool IsPoisoned => Time.time < poisonUntil && !IsDead;
+    float poisonUntil, poisonDps, nextTick;
+    SpriteRenderer poisonIcon; Sprite[] poisonFrames;
+
+    public void ApplyPoison(float damagePerSecond, float duration)
+    {
+        if (IsDead) return;
+        if (!IsPoisoned) nextTick = Time.time + 1f;          // 첫 틱은 1초 뒤
+        poisonUntil = Time.time + duration;                   // 다시 맞으면 시간 초기화
+        poisonDps = Mathf.Max(poisonDps * (IsPoisoned ? 1 : 0), damagePerSecond);
+    }
+
+    void PoisonUpdate()
+    {
+        if (!IsPoisoned) { if (poisonIcon) poisonIcon.enabled = false; return; }
+        if (Time.time >= nextTick)
+        {
+            nextTick += 1f;
+            CurrentHP = Mathf.Max(0f, CurrentHP - poisonDps);
+            DamagePopup.ShowText(transform.position + new Vector3(0.3f, 1.6f, 0), Mathf.RoundToInt(poisonDps).ToString(), new Color(0.8f, 0.45f, 1f));
+            if (IsDead) { poisonUntil = 0; OnDied?.Invoke(); return; }
+        }
+        // 머리 위 독 아이콘
+        if (poisonFrames == null)
+        {
+            var a = Resources.LoadAll<Sprite>("Mushroom/Mush_PoisonIcon");
+            System.Array.Sort(a, (x, y) => x.name.CompareTo(y.name)); poisonFrames = a;
+        }
+        if (poisonIcon == null && poisonFrames.Length > 0)
+        {
+            var g = new GameObject("Poison Icon"); g.transform.SetParent(transform, false);
+            g.transform.localPosition = new Vector3(0, 1.75f, 0);
+            poisonIcon = g.AddComponent<SpriteRenderer>(); poisonIcon.sortingOrder = 60;
+        }
+        if (poisonIcon != null)
+        {
+            poisonIcon.enabled = true;
+            poisonIcon.sprite = poisonFrames[(int)(Time.time * 10) % poisonFrames.Length];
+        }
+        if (sr != null && !IsInvincible) sr.color = new Color(0.85f, 0.7f, 1f, sr.color.a);   // 보랏빛
+    }
+
+    public void CurePoison() { poisonUntil = 0; if (sr) sr.color = new Color(1, 1, 1, sr.color.a); }
+
     // 무적 시간 동안 깜빡임
     void Update()
     {
+        bool wasPoisoned = IsPoisoned;
+        PoisonUpdate();
+        if (wasPoisoned && !IsPoisoned && sr) sr.color = new Color(1, 1, 1, sr.color.a);
         if (sr == null || !blinkWhileInvincible) return;
         bool inv = IsInvincible && !IsDead;
         if (inv)

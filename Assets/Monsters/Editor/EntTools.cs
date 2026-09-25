@@ -89,7 +89,7 @@ public static class EntTools
         var body = go.AddComponent<BoxCollider2D>(); body.size = new Vector2(1.8f, 2.8f); body.offset = new Vector2(0, 1.4f);
         var hit = go.AddComponent<BoxCollider2D>(); hit.isTrigger = true; hit.size = new Vector2(1.7f, 2.6f); hit.offset = new Vector2(0, 1.3f);
         var hp = go.AddComponent<EnemyHealth>(); hp.maxHP = 80f; hp.hpBarOffset = new Vector2(0, 3.4f); hp.deathAnimTime = 1.1f;
-        go.AddComponent<TreeEntEnemy>();
+        var te = go.AddComponent<TreeEntEnemy>(); te.branchDamage = 30f; te.touchDamage = 15f; te.expReward = 40;
         Undo.RegisterCreatedObjectUndo(go, "Create Tree Ent");
         return go;
     }
