@@ -10,7 +10,8 @@ public class NpcImporter : AssetPostprocessor
     void OnPreprocessTexture()
     {
         string p = assetPath.Replace('\\', '/');
-        bool sheet = p.Contains("/NPC/Chief/Chief_"), res = p.Contains("/NPC/Resources/NPC/") || p.Contains("/Settings/Resources/Settings/");
+        bool fairy = p.Contains("/NPC/Fairy/Fairy_");
+        bool sheet = p.Contains("/NPC/Chief/Chief_") || fairy, res = p.Contains("/NPC/Resources/NPC/") || p.Contains("/Settings/Resources/Settings/");
         if (!sheet && !res) return;
         var ti = (TextureImporter)assetImporter;
         ti.textureType = TextureImporterType.Sprite; ti.alphaIsTransparency = true; ti.mipmapEnabled = false;
@@ -20,7 +21,7 @@ public class NpcImporter : AssetPostprocessor
         using (var fs = File.OpenRead(p)) fs.Read(head, 0, 24);
         int w = (head[16] << 24) | (head[17] << 16) | (head[18] << 8) | head[19];
         const int CW = 280, CH = 340; int n = w / CW;
-        ti.spriteImportMode = SpriteImportMode.Multiple; ti.spritePixelsPerUnit = 200;   // 키 약 1.3유닛 (세리아와 비슷)
+        ti.spriteImportMode = SpriteImportMode.Multiple; ti.spritePixelsPerUnit = fairy ? 230 : 200;   // 이장 약 1.3유닛, 요정 약 1.15유닛
         string file = Path.GetFileNameWithoutExtension(p);
         var metas = new SpriteMetaData[n];
         for (int i = 0; i < n; i++)
@@ -103,5 +104,67 @@ public static class NpcTools
         }
         Selection.activeObject = d;
         EditorGUIUtility.PingObject(d);
+    }
+
+    // ───────── 정령의 숲: 숲의 요정 ─────────
+    const string Map4 = "Assets/Scenes/Map4_SpiritForest.unity";
+    const string FairyDialoguePath = "Assets/NPC/Dialogues/Fairy_Dialogue.asset";
+
+    public static DialogueData GetOrCreateFairyDialogue()
+    {
+        var d = AssetDatabase.LoadAssetAtPath<DialogueData>(FairyDialoguePath);
+        if (d != null) return d;
+        if (!AssetDatabase.IsValidFolder("Assets/NPC/Dialogues")) AssetDatabase.CreateFolder("Assets/NPC", "Dialogues");
+        d = ScriptableObject.CreateInstance<DialogueData>();
+        d.seriaPortrait = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/NPC/Resources/NPC/Portrait_Seria.png");
+        d.lines = new[]
+        {
+            new DialogueData.Line { speaker = Speaker.Npc,   text = "(예시) 안녕하세요, 모험가님. 정령의 숲에 오신 걸 환영해요." },
+            new DialogueData.Line { speaker = Speaker.Seria, text = "(예시) 요정…? 이 숲에 살고 있는 거야?" },
+            new DialogueData.Line { speaker = Speaker.Npc,   text = "(예시) 대사는 Fairy_Dialogue 에서 바꿀 수 있어요." },
+        };
+        AssetDatabase.CreateAsset(d, FairyDialoguePath);
+        AssetDatabase.SaveAssets();
+        return d;
+    }
+
+    [MenuItem("Tools/NPC/정령의 숲에 숲의 요정 배치")]
+    public static void PlaceFairy()
+    {
+        if (!File.Exists(Map4)) { EditorUtility.DisplayDialog("NPC 배치", "정령의 숲(Map4_SpiritForest)이 없습니다.", "확인"); return; }
+        if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
+        var dlg = GetOrCreateFairyDialogue();
+        var scene = EditorSceneManager.OpenScene(Map4);
+        var old = GameObject.Find("NPC_ForestFairy"); if (old) Object.DestroyImmediate(old);
+#if UNITY_2023_1_OR_NEWER
+        var stage = Object.FindFirstObjectByType<StageBounds>();
+#else
+        var stage = Object.FindObjectOfType<StageBounds>();
+#endif
+        float left = stage != null ? stage.left : -30f, center = stage != null ? (stage.left + stage.right) / 2f : 0f;
+        float x = (left + center) / 2f;                        // 왼쪽 포탈과 중앙 사이
+
+        var go = new GameObject("NPC_ForestFairy");
+        go.transform.position = new Vector3(x, FeetY + 0.02f, 0);
+        var sr = go.AddComponent<SpriteRenderer>(); sr.sortingOrder = -2; sr.flipX = true;
+        var npc = go.AddComponent<NpcTalker>();
+        npc.npcName = "숲의 요정";
+        npc.idleFrames = Sheet("Assets/NPC/Fairy/Fairy_Idle.png");
+        npc.talkFrames = Sheet("Assets/NPC/Fairy/Fairy_Talk.png");
+        npc.portrait = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/NPC/Resources/NPC/Portrait_Fairy.png");
+        npc.dialogue = dlg;
+        npc.floatHeight = 0.25f; npc.bobAmplitude = 0.08f; npc.bobSpeed = 2.2f;   // 살짝 떠서 둥실둥실
+        npc.iconOffset = new Vector2(0, 1.6f);
+        if (npc.idleFrames.Length > 0) sr.sprite = npc.idleFrames[0];
+        EditorSceneManager.SaveScene(scene);
+        Selection.activeGameObject = go;
+        EditorUtility.DisplayDialog("NPC 배치 완료", $"정령의 숲 x = {x:0.#} 위치에 숲의 요정을 배치했습니다.\n대사는 Assets/NPC/Dialogues/Fairy_Dialogue 에서 수정합니다.", "확인");
+    }
+
+    [MenuItem("Tools/NPC/숲의 요정 대사 편집 열기")]
+    public static void EditFairyDialogue()
+    {
+        var d = GetOrCreateFairyDialogue();
+        Selection.activeObject = d; EditorGUIUtility.PingObject(d);
     }
 }

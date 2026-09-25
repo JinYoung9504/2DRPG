@@ -15,6 +15,11 @@ public class NpcTalker : MonoBehaviour
     public float talkRange = 1.3f;          // NPC 중심에서 이 거리 = 약 1칸 앞
     public bool spriteFacesLeft = false;
     public Vector2 iconOffset = new Vector2(0, 1.75f);
+    [Header("둥실둥실 (요정 등)")]
+    public float floatHeight = 0f;          // 땅에서 떠 있는 높이
+    public float bobAmplitude = 0f;         // 위아래 흔들림 크기
+    public float bobSpeed = 2f;
+    Vector3 basePos;
 
     SpriteRenderer sr, icon; Transform player;
     bool talking, armed = true; float animT, iconT;
@@ -22,6 +27,7 @@ public class NpcTalker : MonoBehaviour
     void Start()
     {
         sr = GetComponent<SpriteRenderer>();
+        basePos = transform.position;
         var p = GameObject.Find("Seria"); if (p) player = p.transform;
         var g = new GameObject("Exclaim"); g.transform.SetParent(transform, false); g.transform.localPosition = iconOffset;
         icon = g.AddComponent<SpriteRenderer>(); icon.sprite = Resources.Load<Sprite>("NPC/Icon_Exclaim"); icon.sortingOrder = sr.sortingOrder + 5; icon.enabled = false;
@@ -32,6 +38,9 @@ public class NpcTalker : MonoBehaviour
         // 애니메이션
         var frames = talking && talkFrames != null && talkFrames.Length > 0 ? talkFrames : idleFrames;
         if (frames != null && frames.Length > 0) { animT += Time.unscaledDeltaTime * fps; sr.sprite = frames[(int)animT % frames.Length]; }
+
+        if (floatHeight != 0f || bobAmplitude != 0f)
+            transform.position = basePos + new Vector3(0, floatHeight + Mathf.Sin(Time.unscaledTime * bobSpeed) * bobAmplitude, 0);
 
         // 느낌표 톡 튀는 효과
         if (icon.enabled) { iconT += Time.unscaledDeltaTime; float s = 1f + 0.25f * Mathf.Exp(-iconT * 8f) * Mathf.Sin(iconT * 30f); icon.transform.localScale = Vector3.one * 0.55f * s; }
