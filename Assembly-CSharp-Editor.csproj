@@ -54,6 +54,7 @@
     <Compile Include="Assets\Maps\Editor\MapBuilder.cs" />
     <Compile Include="Assets\Seria\Editor\TouchControlsBuilder.cs" />
     <Compile Include="Assets\Seria\Editor\SeriaMotionImporter.cs" />
+    <Compile Include="Assets\Settings\Editor\SettingsImporter.cs" />
     <Compile Include="Assets\Title\Editor\TitleSetup.cs" />
     <Compile Include="Assets\Backgrounds\Editor\BackgroundImporter.cs" />
     <Compile Include="Assets\Seria\Editor\SeriaHUDBuilder.cs" />

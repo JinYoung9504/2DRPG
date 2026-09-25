@@ -228,6 +228,7 @@ public class SeriaController : MonoBehaviour
 
     void Update()
     {
+        if (Time.timeScale == 0f) return;                 // 설정 메뉴 등으로 일시정지 중
         if (dead)
         {
             if (Pressed(reviveTestKey)) health.Revive();

@@ -62,6 +62,7 @@
     <Compile Include="Assets\Title\Scripts\Toast.cs" />
     <Compile Include="Assets\Skills\Scripts\PlayerLevel.cs" />
     <Compile Include="Assets\Skills\Scripts\SeriaSkills.cs" />
+    <Compile Include="Assets\Settings\Scripts\BGMPlayer.cs" />
     <Compile Include="Assets\Seria\Scripts\VirtualInput.cs" />
     <Compile Include="Assets\Maps\Scripts\MapPortal.cs" />
     <Compile Include="Assets\Seria\Scripts\PlayerHealth.cs" />

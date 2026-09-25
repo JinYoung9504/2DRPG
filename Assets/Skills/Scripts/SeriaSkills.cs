@@ -48,7 +48,7 @@ public class SeriaSkills : MonoBehaviour
 
     void Update()
     {
-        if (ctrl == null) return;
+        if (ctrl == null || Time.timeScale == 0f) return;
         foreach (var s in All)
             if (SeriaController.KeyDown(s.key)) TryCast(s);
     }
