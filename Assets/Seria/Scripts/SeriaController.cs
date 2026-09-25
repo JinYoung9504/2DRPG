@@ -6,7 +6,9 @@
 //  Space  : 강공격
 //  Shift  : 스킬 (쿨타임 3초)
 //  A / S / D : 검기(5레벨) / 번개(10레벨) / 메테오(20레벨)  → SeriaSkills
-//  H : 피격 테스트(-10)   X : 사망 테스트   R : 부활 테스트
+//  ↓      : 숙이기 (누르고 있는 동안 엎드림 → 날아오는 돌이 머리 위로 지나감)
+//  X      : 방어 (앞에서 오는 공격을 막음, 몸통 박치기를 막으면 패링 → 몬스터 2초 스턴)
+//  H : 피격 테스트(-10)   K : 사망 테스트   R : 부활 테스트
 //  ※ 모든 키는 Inspector 창에서 바꿀 수 있습니다.
 //  ※ 모바일에서는 화면 터치 버튼(TouchControls)으로 같은 동작을 합니다.
 // ─────────────────────────────────────────────
@@ -30,7 +32,9 @@ public class SeriaController : MonoBehaviour
     public KeyCode heavyKey = KeyCode.Space;
     public KeyCode skillKey = KeyCode.LeftShift;
     public KeyCode hitTestKey = KeyCode.H;
-    public KeyCode dieTestKey = KeyCode.X;
+    public KeyCode dieTestKey = KeyCode.K;
+    public KeyCode crouchKey = KeyCode.DownArrow;
+    public KeyCode guardKey = KeyCode.X;
     public KeyCode reviveTestKey = KeyCode.R;
 
     [Header("이동")]
@@ -69,6 +73,10 @@ public class SeriaController : MonoBehaviour
     public float SkillCooldownRemaining => Mathf.Max(0f, skillReadyTime - Time.time);
     float skillReadyTime;
 
+    [Header("방어 · 숙이기")]
+    public float parryStunTime = 2f;       // 패링 성공 시 몬스터 스턴 시간
+    public float crouchHeight = 0.55f;     // 숙였을 때 몸 높이 (원래 약 1.3)
+
     [Header("대쉬 (방향키 두 번 연타)")]
     public float doubleTapTime = 0.25f;   // 두 번 누르는 간격 허용 시간
     public float dashSpeed = 13f;
@@ -103,6 +111,10 @@ public class SeriaController : MonoBehaviour
         anim = GetComponent<Animator>();
         sr = GetComponent<SpriteRenderer>();
         col = GetComponent<Collider2D>();
+        // 예전 설정(X = 사망 테스트)이 남아 있으면 방어 키와 겹치지 않게 변경
+        if (dieTestKey == guardKey) dieTestKey = KeyCode.K;
+        capsule = col as CapsuleCollider2D;
+        if (capsule != null) { standSize = capsule.size; standOffset = capsule.offset; }
 
         // 물리(50회/초)와 화면(60~144회/초) 사이를 보간해 떨림 제거
         rb.interpolation = RigidbodyInterpolation2D.Interpolate;
@@ -111,7 +123,7 @@ public class SeriaController : MonoBehaviour
 
         health = GetComponent<PlayerHealth>();
         if (health == null) health = gameObject.AddComponent<PlayerHealth>();
-        health.OnDamaged += () => { if (dashing) EndDash(); anim.SetTrigger("Hit"); };
+        health.OnDamaged += () => { if (dashing) EndDash(); EndPose(); anim.SetTrigger("Hit"); };
         health.OnDied += Die;
         health.OnRevived += Revive;
 
@@ -121,6 +133,7 @@ public class SeriaController : MonoBehaviour
 
     void Die()
     {
+        EndPose();
         if (dashing) EndDash();
         dead = true; anim.speed = 1f; Vel = Vector2.zero;
         anim.SetTrigger("Die");
@@ -238,6 +251,9 @@ public class SeriaController : MonoBehaviour
             return;
         }
 
+        // ── 방어 / 숙이기 ──
+        if (UpdatePose(grounded, busy)) return;
+
         // ── 방향키 두 번 연타 → 대쉬 ──
         int tap = Pressed(leftKey) ? -1 : Pressed(rightKey) ? 1 : 0;
         if (tap != 0)
@@ -335,8 +351,159 @@ public class SeriaController : MonoBehaviour
         if (squashT >= 1f) transform.localScale = baseScale;
     }
 
+    // ══════════════ 방어 · 숙이기 ══════════════
+    // 애니메이터를 잠시 끄고 Resources/SeriaMotion 의 프레임을 직접 재생
+    enum Pose { None, Guard, Crouch }
+    enum Phase { Enter, Hold, Exit }
+    Pose pose = Pose.None; Phase phase; float frameT; int frameI;
+    Sprite[] guardFrames, proneFrames, shieldFx;
+    CapsuleCollider2D capsule; Vector2 standSize, standOffset;
+    float lastBlockTime = -9f;
+    SpriteRenderer shieldSr;
+
+    // 프레임 구간: 방어 0-2 준비 / 3-5 유지 / 6-7 해제, 엎드리기 0-4 진입 / 5-9 유지 / 10-12 일어나기
+    static readonly int[] GuardEnter = { 0, 1, 2 }, GuardHold = { 3, 4, 5, 4 }, GuardExit = { 6, 7 };
+    static readonly int[] ProneEnter = { 0, 1, 2, 3, 4 }, ProneHold = { 5, 6, 7, 8, 9, 8, 7, 6 }, ProneExit = { 10, 11, 12 };
+
+    static Sprite[] LoadSheet(string path)
+    {
+        var a = Resources.LoadAll<Sprite>(path);
+        System.Array.Sort(a, (x, y) => Num(x.name).CompareTo(Num(y.name)));
+        return a;
+    }
+    static int Num(string n) { int i = n.LastIndexOf('_'); return i >= 0 && int.TryParse(n.Substring(i + 1), out var v) ? v : 0; }
+
+    bool UpdatePose(bool grounded, bool busy)
+    {
+        if (guardFrames == null)
+        {
+            guardFrames = LoadSheet("SeriaMotion/Seria_Guard");
+            proneFrames = LoadSheet("SeriaMotion/Seria_Prone");
+            shieldFx = LoadSheet("SeriaFX/FX_Shield");
+        }
+        bool guardHeld = Held(guardKey), crouchHeld = Held(crouchKey);
+
+        if (pose == Pose.None)
+        {
+            if (!grounded || busy) return false;
+            if (guardHeld && guardFrames.Length >= 8) StartPose(Pose.Guard);
+            else if (crouchHeld && proneFrames.Length >= 13) StartPose(Pose.Crouch);
+            else return false;
+        }
+
+        // 자세 중엔 제자리 (방향만 바꿀 수 있음)
+        Vel = new Vector2(Mathf.MoveTowards(Vel.x, 0, deceleration * Time.deltaTime), Vel.y);
+        if (pose == Pose.Guard && phase != Phase.Exit)
+        {
+            if (Pressed(leftKey)) sr.flipX = true;
+            if (Pressed(rightKey)) sr.flipX = false;
+        }
+
+        bool held = pose == Pose.Guard ? guardHeld : crouchHeld;
+        if (!held && phase != Phase.Exit) { phase = Phase.Exit; frameI = 0; frameT = 0; if (pose == Pose.Crouch) SetCrouchCollider(false); }
+
+        var frames = pose == Pose.Guard ? guardFrames : proneFrames;
+        int[] seq = pose == Pose.Guard
+            ? (phase == Phase.Enter ? GuardEnter : phase == Phase.Hold ? GuardHold : GuardExit)
+            : (phase == Phase.Enter ? ProneEnter : phase == Phase.Hold ? ProneHold : ProneExit);
+        float fdur = phase == Phase.Hold ? (pose == Pose.Guard ? 0.1f : 0.16f) : (pose == Pose.Guard ? 0.05f : 0.05f);
+
+        frameT += Time.deltaTime;
+        while (frameT >= fdur)
+        {
+            frameT -= fdur; frameI++;
+            if (frameI >= seq.Length)
+            {
+                if (phase == Phase.Enter) { phase = Phase.Hold; frameI = 0; seq = pose == Pose.Guard ? GuardHold : ProneHold; }
+                else if (phase == Phase.Hold) frameI = 0;
+                else { EndPose(); return true; }
+            }
+        }
+        sr.sprite = frames[seq[Mathf.Min(frameI, seq.Length - 1)]];
+        anim.SetFloat("Speed", 0f);
+        return true;
+    }
+
+    void StartPose(Pose p)
+    {
+        pose = p; phase = Phase.Enter; frameI = 0; frameT = 0;
+        anim.enabled = false;
+        if (p == Pose.Crouch) SetCrouchCollider(true);
+    }
+
+    void EndPose()
+    {
+        if (pose == Pose.None) return;
+        if (pose == Pose.Crouch) SetCrouchCollider(false);
+        pose = Pose.None;
+        anim.enabled = true;
+        anim.Play("Idle", 0, 0f);
+    }
+
+    void SetCrouchCollider(bool crouch)
+    {
+        if (capsule == null) return;
+        if (crouch)
+        {
+            capsule.size = new Vector2(standSize.x, crouchHeight);
+            capsule.offset = new Vector2(standOffset.x, standOffset.y - (standSize.y - crouchHeight) / 2f);
+        }
+        else { capsule.size = standSize; capsule.offset = standOffset; }
+    }
+
+    public bool IsGuarding => pose == Pose.Guard && phase != Phase.Exit;
+    public bool IsCrouching => pose == Pose.Crouch;
+
+    // 몬스터·투사체가 공격 직전에 호출: 막으면 true (bodyAttack = 몸통 박치기 → 패링)
+    public bool TryBlock(Vector3 from, bool bodyAttack)
+    {
+        if (!IsGuarding) return false;
+        if (phase == Phase.Enter && frameI == 0) return false;          // 방어 들어가는 첫 순간은 아직 못 막음
+        float face = sr.flipX ? -1f : 1f, dx = from.x - transform.position.x;
+        if (Mathf.Abs(dx) > 0.2f && Mathf.Sign(dx) != face) return false;   // 등 뒤 공격은 못 막음
+        if (Time.time < lastBlockTime + 0.25f) return true;              // 같은 공격이 연달아 닿는 경우
+        lastBlockTime = Time.time;
+
+        StartCoroutine(ShieldFlash(bodyAttack));
+        Vel = new Vector2(-face * (bodyAttack ? 2.5f : 1.5f), Vel.y);   // 살짝 밀림
+        if (bodyAttack)
+        {
+            DamagePopup.ShowText(transform.position + new Vector3(face * 0.4f, 1.9f, 0), "PARRY!", new Color(0.55f, 0.85f, 1f));
+            StartCoroutine(HitStop(0.08f));
+            CameraShake.Shake(0.12f, 0.12f);
+        }
+        else DamagePopup.ShowText(transform.position + new Vector3(face * 0.4f, 1.7f, 0), "BLOCK", new Color(0.8f, 0.9f, 1f));
+        return true;
+    }
+
+    IEnumerator ShieldFlash(bool parry)
+    {
+        if (shieldFx == null || shieldFx.Length < 6) yield break;
+        if (shieldSr == null)
+        {
+            var g = new GameObject("Shield FX"); g.transform.SetParent(transform, false);
+            shieldSr = g.AddComponent<SpriteRenderer>(); shieldSr.sortingOrder = sr.sortingOrder + 2;
+        }
+        float face = sr.flipX ? -1f : 1f;
+        shieldSr.transform.localPosition = new Vector3(face * 0.55f, 0.7f, 0);
+        shieldSr.flipX = face < 0;
+        int[] seq = parry ? new[] { 3, 4, 5, 5 } : new[] { 2, 3 };
+        float scale = parry ? 1.3f : 1f;
+        shieldSr.transform.localScale = Vector3.one * scale;
+        foreach (int i in seq) { shieldSr.sprite = shieldFx[i]; shieldSr.color = Color.white; yield return new WaitForSecondsRealtime(0.06f); }
+        for (float t = 1f; t > 0; t -= Time.unscaledDeltaTime / 0.15f) { shieldSr.color = new Color(1, 1, 1, t); yield return null; }
+        shieldSr.sprite = null;
+    }
+
+    IEnumerator HitStop(float seconds)
+    {
+        Time.timeScale = 0.05f;
+        yield return new WaitForSecondsRealtime(seconds);
+        Time.timeScale = 1f;
+    }
+
     // ── 다른 스크립트(SeriaSkills)용 ──
-    public bool CanAct => !dead && !dashing && !Busy();
+    public bool CanAct => !dead && !dashing && !Busy() && pose == Pose.None;
     float suppressHitUntil;
     // 스킬 시전 모션만 재생 (근접 공격 판정은 하지 않음)
     public void PlayCastAnimation(string trigger)

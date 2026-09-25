@@ -98,6 +98,7 @@ public class SlimeEnemy : MonoBehaviour
     void Update()
     {
         if (health.IsDead) return;
+        if (health.IsStunned) { Vel = new Vector2(0, Vel.y); lunging = false; anim.SetFloat("Speed", 0f); anim.speed = 0.3f; return; }
         if (Time.time < stunUntil) { anim.SetFloat("Speed", 0f); anim.speed = animBase; return; }
 
         bool grounded = Grounded();
@@ -172,9 +173,17 @@ public class SlimeEnemy : MonoBehaviour
     // 몸에 닿으면 데미지 (Trigger 충돌체 사용)
     void OnTriggerStay2D(Collider2D other)
     {
-        if (health.IsDead || Time.time < stunUntil) return;
+        if (health.IsDead || health.IsStunned || Time.time < stunUntil) return;
         if (playerHealth == null || other.attachedRigidbody != playerRb) return;
         if (playerHealth.IsDead) return;
+        // 방어로 막으면 → 패링: 몬스터 스턴
+        var guard = player != null ? player.GetComponent<SeriaController>() : null;
+        if (guard != null && guard.TryBlock(transform.position, true))
+        {
+            health.Stun(guard.parryStunTime);
+            OnParried();
+            return;
+        }
 
         float before = playerHealth.CurrentHP;
         playerHealth.TakeDamage(attackDamage);
@@ -184,6 +193,13 @@ public class SlimeEnemy : MonoBehaviour
             if (dir == 0) dir = 1;
             SetVel(playerRb, new Vector2(dir * knockback.x, knockback.y));
         }
+    }
+
+    void OnParried()
+    {
+        lunging = false;
+        float d = Mathf.Sign(transform.position.x - player.position.x); if (d == 0) d = 1;
+        Vel = new Vector2(d * 4f, 3f);            // 튕겨나감
     }
 
     void OnDrawGizmosSelected()

@@ -60,6 +60,7 @@ public class GolemEnemy : MonoBehaviour
             StopAllCoroutines(); throwing = false;
             if (PlayerLevel.Instance != null) PlayerLevel.Instance.AddExp(expReward);
         };
+        health.OnStunned += () => { StopAllCoroutines(); throwing = false; nextThrowTime = Time.time + 2.5f; };   // 스턴되면 던지기 취소
         health.OnRespawned += () => { aggro = false; throwing = false; wanderTarget = homeX; nextThrowTime = Time.time + 1f; };
     }
 
@@ -76,7 +77,10 @@ public class GolemEnemy : MonoBehaviour
 
     void Update()
     {
-        if (health.IsDead || throwing) return;
+        if (health.IsDead) return;
+        if (health.IsStunned) { Vel = new Vector2(0, Vel.y); anim.SetFloat("Speed", 0f); anim.speed = 0.3f; return; }
+        anim.speed = 1f;
+        if (throwing) return;
 
         bool alive = player != null && (playerHealth == null || !playerHealth.IsDead);
         float dx = alive ? player.position.x - transform.position.x : 0f;
@@ -118,7 +122,7 @@ public class GolemEnemy : MonoBehaviour
         if (player != null && !health.IsDead)
         {
             Vector3 hand = transform.position + new Vector3(handOffset.x * dir, handOffset.y, 0);
-            Vector3 target = player.position + new Vector3(0, 0.6f, 0);           // 플레이어 몸통 높이
+            Vector3 target = player.position + new Vector3(0, 0.9f, 0);           // 플레이어 가슴 높이 (숙이면 머리 위로 지나감)
             GolemRock.Throw(hand, target, rockFlightTime, rockDamage);
         }
         yield return new WaitForSeconds(Mathf.Max(0f, throwAnimTime - releaseDelay));
@@ -128,12 +132,22 @@ public class GolemEnemy : MonoBehaviour
 
     void OnTriggerStay2D(Collider2D other)
     {
-        if (health.IsDead || playerHealth == null || playerHealth.IsDead || other.attachedRigidbody != playerRb) return;
+        if (health.IsDead || health.IsStunned || playerHealth == null || playerHealth.IsDead || other.attachedRigidbody != playerRb) return;
+        // 방어로 막으면 → 패링: 몬스터 스턴
+        var guard = player != null ? player.GetComponent<SeriaController>() : null;
+        if (guard != null && guard.TryBlock(transform.position, true))
+        {
+            health.Stun(guard.parryStunTime);
+            OnParried();
+            return;
+        }
         float before = playerHealth.CurrentHP;
         playerHealth.TakeDamage(touchDamage);
         if (playerHealth.CurrentHP < before && playerRb != null)
             SetVel(playerRb, new Vector2(Mathf.Sign(player.position.x - transform.position.x) * 5f, 3f));
     }
+
+    void OnParried() { }                        // 무거워서 밀리지 않음
 
     void OnDrawGizmosSelected()
     {
@@ -183,6 +197,8 @@ public class GolemRock : MonoBehaviour
             if (hp != null)
             {
                 if (hp.IsDead) continue;
+                var guard = hp.GetComponent<SeriaController>();
+                if (guard != null && guard.TryBlock(transform.position, false)) { Break(); return; }   // 방어로 막음 (패링은 아님)
                 float before = hp.CurrentHP;
                 hp.TakeDamage(damage);
                 if (hp.CurrentHP < before)

@@ -125,6 +125,7 @@ public class BoarEnemy : MonoBehaviour
     void Update()
     {
         if (health.IsDead) return;
+        if (health.IsStunned) { Vel = new Vector2(0, Vel.y); anim.SetFloat("Speed", 0f); anim.speed = 0.3f; state = State.Idle; return; }
         if (Time.time < stunUntil) { anim.SetFloat("Speed", 0f); anim.speed = 1f; return; }
 
         float dx = 0, dy = 0, dist = float.MaxValue;
@@ -186,8 +187,16 @@ public class BoarEnemy : MonoBehaviour
 
     void OnTriggerStay2D(Collider2D other)
     {
-        if (health.IsDead || playerHealth == null || playerHealth.IsDead) return;
+        if (health.IsDead || health.IsStunned || playerHealth == null || playerHealth.IsDead) return;
         if (other.attachedRigidbody != playerRb) return;
+        // 방어로 막으면 → 패링: 몬스터 스턴
+        var guard = player != null ? player.GetComponent<SeriaController>() : null;
+        if (guard != null && guard.TryBlock(transform.position, true))
+        {
+            health.Stun(guard.parryStunTime);
+            OnParried();
+            return;
+        }
 
         bool charging = state == State.Charge;
         float before = playerHealth.CurrentHP;
@@ -199,6 +208,13 @@ public class BoarEnemy : MonoBehaviour
             var kb = charging ? chargeKnockback : touchKnockback;
             SetVel(playerRb, new Vector2(dir * kb.x, kb.y));
         }
+    }
+
+    void OnParried()
+    {
+        float d = Mathf.Sign(transform.position.x - player.position.x); if (d == 0) d = 1;
+        Vel = new Vector2(d * 5f, 2f);            // 돌진이 막혀 튕겨나감
+        state = State.Idle; sr.color = baseColor;
     }
 
     void OnDrawGizmosSelected()

@@ -10,7 +10,7 @@ public class TouchControls : MonoBehaviour
     public bool alwaysShow = false;          // PC(에디터)에서도 버튼 표시
 
     [Header("버튼 그림")]
-    public Sprite left, right, jump, attack, heavy, skill;
+    public Sprite left, right, jump, attack, heavy, skill, down, guard;
 
     [Header("투명도 (0~1, 낮을수록 흐릿)")]
     [Range(0, 1)] public float idleAlpha = 0.45f;
@@ -66,6 +66,10 @@ public class TouchControls : MonoBehaviour
         Btn(cgo.transform, "Heavy", heavy, player.heavyKey, R, new Vector2(-430, 90), 150);
         var sk = Btn(cgo.transform, "Skill", skill, player.skillKey, R, new Vector2(-210, 190), 150);
 
+        // 숙이기 (이동 버튼 아래) / 방어 (공격 버튼 왼쪽)
+        Btn(cgo.transform, "Down", Pick(down, "SeriaUI/Btn_Down"), player.crouchKey, L, new Vector2(280, -250), 150);
+        Btn(cgo.transform, "Guard", Pick(guard, "SeriaUI/Btn_Guard"), player.guardKey, R, new Vector2(-640, -60), 150);
+
         // 레벨 스킬 (검기 A / 번개 S / 메테오 D) — 우측 위쪽 줄
         var lvSkills = player.GetComponent<SeriaSkills>();
         if (lvSkills != null)
@@ -101,6 +105,8 @@ public class TouchControls : MonoBehaviour
         b.key = key; b.idleAlpha = idleAlpha; b.pressedAlpha = pressedAlpha;
         return rt;
     }
+
+    static Sprite Pick(Sprite s, string res) { if (s != null) return s; var r = Resources.Load<Sprite>(res); return r; }
 
     static Sprite circle;
     static Sprite CircleSprite()

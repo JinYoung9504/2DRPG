@@ -11,6 +11,9 @@ public class EnemyHealth : MonoBehaviour
 
     public float CurrentHP { get; private set; }
     public bool IsDead => CurrentHP <= 0f;
+    public float StunnedUntil { get; private set; }
+    public bool IsStunned => !IsDead && Time.time < StunnedUntil;
+    public event Action OnStunned;
 
     public event Action<float> OnHurt;    // 인자: 밀려날 방향 (-1 왼쪽 / 1 오른쪽)
     public event Action OnDied;
@@ -26,6 +29,46 @@ public class EnemyHealth : MonoBehaviour
         CurrentHP = maxHP; homePos = transform.position; baseScale = transform.localScale;
         baseColor = sr != null ? sr.color : Color.white;
         BuildBar();
+    }
+
+    // 스턴: 일정 시간 아무 행동도 못 함 (패링당했을 때)
+    public void Stun(float seconds)
+    {
+        if (IsDead) return;
+        StunnedUntil = Time.time + seconds;
+        DamagePopup.ShowText(transform.position + new Vector3(0, hpBarOffset.y + 0.35f, 0), "STUN", new Color(1f, 0.95f, 0.4f));
+        OnStunned?.Invoke();
+        if (stunRoutine != null) StopCoroutine(stunRoutine);
+        stunRoutine = StartCoroutine(StunFx());
+    }
+    Coroutine stunRoutine;
+
+    IEnumerator StunFx()
+    {
+        // 머리 위에서 도는 노란 별(점) 3개 + 푸르스름하게 어두워짐
+        var stars = new Transform[3];
+        for (int i = 0; i < 3; i++)
+        {
+            var g = new GameObject("StunStar"); g.transform.SetParent(transform, false);
+            var r = g.AddComponent<SpriteRenderer>(); r.sprite = Pixel(); r.color = new Color(1f, 0.9f, 0.3f); r.sortingOrder = 60;
+            g.transform.localScale = new Vector3(0.12f, 0.12f, 1);
+            stars[i] = g.transform;
+        }
+        while (IsStunned)
+        {
+            float t = Time.time * 5f;
+            var s = transform.localScale;
+            for (int i = 0; i < 3; i++)
+            {
+                float ang = t + i * 2.094f;
+                stars[i].localPosition = new Vector3((Mathf.Cos(ang) * 0.4f - 0.06f) / Mathf.Max(0.01f, s.x), (hpBarOffset.y - 0.15f + Mathf.Sin(ang) * 0.12f) / Mathf.Max(0.01f, s.y), 0);
+            }
+            if (sr) sr.color = Color.Lerp(baseColor, new Color(0.6f, 0.65f, 0.95f, baseColor.a), 0.5f + 0.2f * Mathf.Sin(Time.time * 10f));
+            yield return null;
+        }
+        foreach (var st in stars) if (st) Destroy(st.gameObject);
+        if (sr && !IsDead) sr.color = baseColor;
+        stunRoutine = null;
     }
 
     public void TakeDamage(float amount, float attackerX)
@@ -48,7 +91,7 @@ public class EnemyHealth : MonoBehaviour
     {
         sr.color = new Color(1f, 0.45f, 0.45f, baseColor.a);
         yield return new WaitForSeconds(0.1f);
-        if (!IsDead) sr.color = baseColor;
+        if (!IsDead && !IsStunned) sr.color = baseColor;
     }
 
     IEnumerator DieRoutine()
@@ -71,7 +114,7 @@ public class EnemyHealth : MonoBehaviour
 
         // 리스폰
         transform.position = homePos; transform.localScale = baseScale;
-        CurrentHP = maxHP;
+        CurrentHP = maxHP; StunnedUntil = 0f;
         if (sr) { sr.enabled = true; sr.color = new Color(baseColor.r, baseColor.g, baseColor.b, 0); }
         foreach (var c in cols) c.enabled = true;
         if (rb != null) rb.simulated = true;
