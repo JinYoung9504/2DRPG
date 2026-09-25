@@ -19,6 +19,7 @@ public class DialogueUI : MonoBehaviour
     Text nameText, bodyText; Image portrait; RectTransform plate, body, portraitRt; GameObject root; RectTransform nextMark;
     Entry[] entries; int index; bool typing; Action onClose; Coroutine typeCo;
     public float charsPerSecond = 35f;
+    float prevScale = 1f;
 
     public static void Show(Entry[] list, Action onClosed = null)
     {
@@ -125,6 +126,7 @@ public class DialogueUI : MonoBehaviour
     void Open(Entry[] list, Action closed)
     {
         entries = list; index = 0; onClose = closed;
+        if (!IsOpen) { prevScale = Time.timeScale; Time.timeScale = 0f; }     // 대화 중 게임 일시정지
         root.SetActive(true); IsOpen = true;
         ShowLine();
     }
@@ -157,6 +159,7 @@ public class DialogueUI : MonoBehaviour
     void Close()
     {
         root.SetActive(false); IsOpen = false;
+        Time.timeScale = prevScale <= 0f ? 1f : prevScale;
         var cb = onClose; onClose = null; cb?.Invoke();
     }
 
@@ -175,5 +178,5 @@ public class DialogueUI : MonoBehaviour
         if (next) Advance();
     }
 
-    void OnDestroy() { if (inst == this) { IsOpen = false; inst = null; } }
+    void OnDestroy() { if (inst == this) { if (IsOpen) Time.timeScale = 1f; IsOpen = false; inst = null; } }
 }

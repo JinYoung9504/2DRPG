@@ -91,7 +91,7 @@ public class TitleScreen : MonoBehaviour
         leaving = true;
         PlayerHealth.CarryHP = -1f;                 // 새 게임: 체력 가득
         PlayerLevel.CarryLevel = 1; PlayerLevel.CarryExp = 0;   // 새 게임: 1레벨
-        GameProgress.Reset();
+        GameProgress.Reset(); MonsterTalk.ResetShown();
         SceneTransition.Go(firstScene, null);
     }
 
@@ -103,7 +103,7 @@ public class TitleScreen : MonoBehaviour
         leaving = true;
         PlayerHealth.CarryHP = data.hp;
         PlayerLevel.CarryLevel = Mathf.Max(1, data.level); PlayerLevel.CarryExp = data.exp;
-        GameProgress.Load(data.defeatedBosses);
+        GameProgress.Load(data.defeatedBosses); MonsterTalk.ResetShown();
         SceneTransition.GoToPosition(data.scene, new Vector3(data.x, data.y, 0), data.facingLeft);
     }
 }

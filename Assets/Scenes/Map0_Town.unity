@@ -1364,7 +1364,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NpcTalker
   npcName: "\uB9C8\uC744 \uC774\uC7A5"
-  dialogue: {fileID: 0}
+  dialogue: {fileID: 11400000, guid: c0120c44625cbaa47a6ec8289e799ec6, type: 2}
   lines: []
   portrait: {fileID: 21300000, guid: 5e80946e407d3eb4894e3428eeeda3d4, type: 3}
   idleFrames:

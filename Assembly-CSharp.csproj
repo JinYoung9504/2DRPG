@@ -56,6 +56,7 @@
     <Compile Include="Assets\Skills\Scripts\SkillEffects.cs" />
     <Compile Include="Assets\Maps\Scripts\SceneTransition.cs" />
     <Compile Include="Assets\Monsters\Scripts\BoarEnemy.cs" />
+    <Compile Include="Assets\Monsters\Scripts\MonsterTalkData.cs" />
     <Compile Include="Assets\Backgrounds\Scripts\CameraFollow2D.cs" />
     <Compile Include="Assets\Monsters\Scripts\TreeEntEnemy.cs" />
     <Compile Include="Assets\Seria\Scripts\SeriaController.cs" />
@@ -74,6 +75,7 @@
     <Compile Include="Assets\NPC\Scripts\DialogueUI.cs" />
     <Compile Include="Assets\NPC\Scripts\NpcTalker.cs" />
     <Compile Include="Assets\Monsters\Scripts\GolemEnemy.cs" />
+    <Compile Include="Assets\Monsters\Scripts\MonsterTalk.cs" />
     <Compile Include="Assets\Monsters\Scripts\DamagePopup.cs" />
     <Compile Include="Assets\Monsters\Scripts\EnemyHealth.cs" />
     <Compile Include="Assets\Monsters\Scripts\SlimeEnemy.cs" />

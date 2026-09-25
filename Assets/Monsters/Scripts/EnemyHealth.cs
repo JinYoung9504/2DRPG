@@ -78,7 +78,8 @@ public class EnemyHealth : MonoBehaviour
     void Start()
     {
         // 이미 쓰러뜨린 보스는 등장하지 않음
-        if (isBoss && GameProgress.IsBossDefeated(BossKey)) Destroy(gameObject);
+        if (isBoss && GameProgress.IsBossDefeated(BossKey)) { Destroy(gameObject); return; }
+        MonsterTalk.Attach(this);                                   // 몬스터 대사 파일이 있으면 대화 기능 연결
     }
     string BossKey => string.IsNullOrEmpty(bossId) ? gameObject.name : bossId;
 
