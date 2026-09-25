@@ -57,12 +57,15 @@
     <Compile Include="Assets\Settings\Editor\SettingsImporter.cs" />
     <Compile Include="Assets\Title\Editor\TitleSetup.cs" />
     <Compile Include="Assets\Backgrounds\Editor\BackgroundImporter.cs" />
+    <Compile Include="Assets\Maps\Editor\WorldBuilder.cs" />
     <Compile Include="Assets\Seria\Editor\SeriaHUDBuilder.cs" />
     <Compile Include="Assets\Maps\Editor\Map3Builder.cs" />
+    <Compile Include="Assets\Monsters\Editor\EntTools.cs" />
     <Compile Include="Assets\Backgrounds\Editor\BackgroundBuilder.cs" />
     <Compile Include="Assets\Skills\Editor\SkillFXImporter.cs" />
     <Compile Include="Assets\Seria\Editor\SeriaSpriteImporter.cs" />
     <Compile Include="Assets\Monsters\Editor\SlimeTools.cs" />
+    <Compile Include="Assets\Maps\Editor\ForestMap2Builder.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">

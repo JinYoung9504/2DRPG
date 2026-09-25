@@ -1,5 +1,7 @@
-// 배경음악: 마을 배경(Town Background)이 있는 맵에서 BGM_Town 을 반복 재생
-//  씬에 따로 넣을 필요 없이 게임 시작 시 자동 생성되고, 맵을 이동해도 끊기지 않고 이어짐
+// 배경음악: 맵의 배경에 따라 자동으로 곡을 골라 반복 재생
+//  시작 마을(Town Background)  → BGM_Town   (Hearthfire and Cobblestone)
+//  정령의 숲(Forest Background) → BGM_Forest (Beyond the Sacred Canopy)
+//  같은 지역 안에서 맵을 이동하면 끊기지 않고 이어지고, 지역이 바뀌면 부드럽게 교체
 //  볼륨은 PlayerPrefs 에 저장 (게임을 껐다 켜도 유지)
 using System.Collections;
 using UnityEngine;
@@ -11,7 +13,14 @@ public class BGMPlayer : MonoBehaviour
     const string VolumeKey = "BGM_Volume";
     const float DefaultVolume = 0.6f;
 
-    AudioSource src; AudioClip townClip; Coroutine fade;
+    // (배경 오브젝트 이름, Resources/Audio 안의 곡 이름)
+    static readonly (string background, string clip)[] Areas =
+    {
+        ("Town Background", "BGM_Town"),
+        ("Forest Background", "BGM_Forest"),
+    };
+
+    AudioSource src; Coroutine fade;
 
     public static float Volume
     {
@@ -38,33 +47,42 @@ public class BGMPlayer : MonoBehaviour
     {
         src = gameObject.AddComponent<AudioSource>();
         src.loop = true; src.playOnAwake = false; src.volume = 0f;
-        townClip = Resources.Load<AudioClip>("Audio/BGM_Town");
-        if (townClip == null) Debug.LogWarning("[BGM] Resources/Audio/BGM_Town 을 찾을 수 없습니다.");
     }
 
     void Refresh()
     {
-        bool town = GameObject.Find("Town Background") != null;
-        if (town && townClip != null)
-        {
-            if (src.clip != townClip || !src.isPlaying) { src.clip = townClip; src.volume = 0f; src.Play(); }
-            FadeTo(Volume, 1.2f);
-        }
-        else if (src.isPlaying) FadeTo(0f, 0.8f, stopAfter: true);
-    }
+        AudioClip want = null;
+        foreach (var a in Areas)
+            if (GameObject.Find(a.background) != null)
+            {
+                want = Resources.Load<AudioClip>("Audio/" + a.clip);
+                if (want == null) Debug.LogWarning("[BGM] Resources/Audio/" + a.clip + " 을 찾을 수 없습니다.");
+                break;
+            }
 
-    void FadeTo(float target, float time, bool stopAfter = false)
-    {
         if (fade != null) StopCoroutine(fade);
-        fade = StartCoroutine(Fade(target, time, stopAfter));
+        fade = StartCoroutine(SwitchTo(want));
     }
 
-    IEnumerator Fade(float target, float time, bool stopAfter)
+    IEnumerator SwitchTo(AudioClip clip)
+    {
+        if (clip != null && src.clip == clip && src.isPlaying)          // 같은 지역: 그대로 이어서
+        {
+            yield return Fade(Volume, 0.6f);
+        }
+        else
+        {
+            if (src.isPlaying) yield return Fade(0f, 0.6f);              // 이전 곡 서서히 끄기
+            src.Stop();
+            if (clip != null) { src.clip = clip; src.volume = 0f; src.Play(); yield return Fade(Volume, 1.2f); }
+        }
+        fade = null;
+    }
+
+    IEnumerator Fade(float target, float time)
     {
         float from = src.volume;
         for (float t = 0; t < time; t += Time.unscaledDeltaTime) { src.volume = Mathf.Lerp(from, target, t / time); yield return null; }
         src.volume = target;
-        if (stopAfter) src.Stop();
-        fade = null;
     }
 }

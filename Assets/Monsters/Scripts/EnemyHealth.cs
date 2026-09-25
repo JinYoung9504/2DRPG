@@ -6,7 +6,8 @@ using UnityEngine;
 public class EnemyHealth : MonoBehaviour
 {
     public float maxHP = 10f;
-    public float respawnTime = 5f;        // 죽은 뒤 이 시간 후 원래 자리에서 다시 등장 (0 이면 리스폰 안 함)
+    public float respawnTime = 5f;
+    public float deathAnimTime = 0f;      // 0보다 크면: 납작해지는 기본 연출 대신 AI 가 재생하는 사망 애니메이션을 이 시간만큼 기다린 뒤 사라짐        // 죽은 뒤 이 시간 후 원래 자리에서 다시 등장 (0 이면 리스폰 안 함)
     public Vector2 hpBarOffset = new Vector2(0f, 1.05f);
 
     public float CurrentHP { get; private set; }
@@ -98,8 +99,14 @@ public class EnemyHealth : MonoBehaviour
     {
         foreach (var c in cols) c.enabled = false;
         if (rb != null) rb.simulated = false;
+        if (deathAnimTime > 0f)
+        {
+            barRoot.gameObject.SetActive(false);
+            yield return new WaitForSeconds(deathAnimTime);
+            for (float t = 0; t < 0.5f; t += Time.deltaTime) { if (sr) sr.color = new Color(baseColor.r, baseColor.g, baseColor.b, baseColor.a * (1f - t / 0.5f)); yield return null; }
+        }
         // 납작하게 퍼지면서 사라짐
-        for (float t = 0; t < 0.45f; t += Time.deltaTime)
+        else for (float t = 0; t < 0.45f; t += Time.deltaTime)
         {
             float k = t / 0.45f;
             transform.localScale = new Vector3(baseScale.x * (1f + 0.5f * k), baseScale.y * (1f - 0.8f * k), baseScale.z);

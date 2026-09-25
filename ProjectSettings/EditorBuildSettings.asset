@@ -9,6 +9,9 @@ EditorBuildSettings:
     path: Assets/Scenes/Title.unity
     guid: 01bdd337255ea01418607dd6e49b6405
   - enabled: 1
+    path: Assets/Scenes/Map0_Town.unity
+    guid: 0654ae34e520f3d43afccf9d7ad93d08
+  - enabled: 1
     path: Assets/Scenes/Map1_Slime.unity
     guid: 6ca72c565d088b642a897d6666a702f1
   - enabled: 1
@@ -17,6 +20,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Map3_Golem.unity
     guid: 138ca088123db9944b01a92045a0b9d9
+  - enabled: 1
+    path: Assets/Scenes/Map4_SpiritForest.unity
+    guid: 5d2a866e07d84b24794c6c44dab64faf
   - enabled: 1
     path: Assets/Scenes/SampleScene.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02

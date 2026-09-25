@@ -148,7 +148,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a9c11b9c8141e6740a04b9caa077338e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TitleScreen
-  firstScene: Map1_Slime
+  firstScene: Map0_Town
   background: {fileID: 21300000, guid: 1be588d5095c42248a55b346c800cd64, type: 3}
   backgroundBlur: {fileID: 0}
   startMask: {fileID: 21300000, guid: bf96c13c22cf13b4eaab4446c126715a, type: 3}
