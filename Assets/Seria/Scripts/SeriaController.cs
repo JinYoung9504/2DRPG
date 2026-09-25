@@ -157,7 +157,7 @@ public class SeriaController : MonoBehaviour
         return false;
     }
 
-    // 공격·스킬·피격 중인지 (이때는 지상에서 못 움직임)
+    // 공격·스킬·피격 동작 중인지 (캔슬 판단용)
     bool Busy()
     {
         var s = anim.GetCurrentAnimatorStateInfo(0);
@@ -284,8 +284,9 @@ public class SeriaController : MonoBehaviour
         float x = 0;
         if (Held(leftKey)) x -= 1;
         if (Held(rightKey)) x += 1;
-        if (busy && grounded) x = 0;                 // 지상 공격 중엔 제자리
-        if (x != 0 && !busy) sr.flipX = x < 0;       // 원본 그림은 오른쪽을 봄
+        if (x != 0) sr.flipX = x < 0;                // 원본 그림은 오른쪽을 봄
+        // 공격 중 새로 방향키를 누르면 공격 동작을 끊고 바로 이동 (누른 채로 공격하면 공격 유지)
+        if (busy && (Pressed(leftKey) || Pressed(rightKey))) { CancelAttack(); anim.Play(grounded ? "Walk" : "Jump", 0, 0.5f); busy = false; }
 
         // ── 점프 타이밍 계산 ──
         coyoteCounter = grounded ? coyoteTime : coyoteCounter - Time.deltaTime;
@@ -302,16 +303,19 @@ public class SeriaController : MonoBehaviour
         v.x = Mathf.MoveTowards(v.x, target, rate * control * Time.deltaTime);
 
         // ── 점프 ──
-        if (jumpBufferCounter > 0 && coyoteCounter > 0 && !busy)
+        if (jumpBufferCounter > 0 && coyoteCounter > 0)
         {
+            if (busy) CancelAttack();                     // 공격 중에도 바로 점프
+            anim.Play("Jump", 0, 0f);
             v.y = jumpForce;
             Squash(-1f);                                  // 점프: 위로 늘어남
             jumpBufferCounter = 0;
             coyoteCounter = 0;
         }
         // 2단 점프: 공중에서 점프 키를 한 번 더
-        else if (jumpPressed && !grounded && coyoteCounter <= 0 && airJumpsUsed < maxAirJumps && !busy)
+        else if (jumpPressed && !grounded && coyoteCounter <= 0 && airJumpsUsed < maxAirJumps)
         {
+            if (busy) CancelAttack();
             v.y = airJumpForce;
             airJumpsUsed++;
             jumpBufferCounter = 0;
@@ -326,12 +330,18 @@ public class SeriaController : MonoBehaviour
         Vel = v;
 
         // ── 공격 ──
-        if (Pressed(attackKey, attackKey2)) anim.SetTrigger("Attack");
-        if (Pressed(heavyKey)) { anim.SetTrigger("Heavy"); StartCoroutine(Fx(slashFx, 0.25f, new Vector2(0.6f, 0.7f), 0.25f)); }
-        if (Pressed(skillKey) && !busy && SkillCooldownRemaining <= 0f)   // 쿨타임이 다 차야 사용 가능
+        // 어떤 동작 중이든 즉시 새 공격으로 전환 (기본 공격을 이어 누르면 콤보 → 강공격)
+        if (Pressed(attackKey, attackKey2))
+        {
+            var cur = anim.GetCurrentAnimatorStateInfo(0);
+            bool combo = cur.IsName("Attack1") && cur.normalizedTime > 0.35f;
+            if (combo) StartAttack("Attack2", heavyBox, heavyDamage); else StartAttack("Attack1", attackBox, attackDamage);
+        }
+        if (Pressed(heavyKey)) { StartAttack("Attack2", heavyBox, heavyDamage); StartCoroutine(Fx(slashFx, 0.25f, new Vector2(0.6f, 0.7f), 0.25f)); }
+        if (Pressed(skillKey) && SkillCooldownRemaining <= 0f)   // 쿨타임이 다 차야 사용 가능
         {
             skillReadyTime = Time.time + skillCooldown;
-            anim.SetTrigger("Skill");
+            StartAttack("Skill", skillBox, skillDamage);
             StartCoroutine(Fx(skillFx, 0.5f, new Vector2(1.0f, 0.7f), 0.4f));
         }
 
@@ -399,10 +409,13 @@ public class SeriaController : MonoBehaviour
             shieldFx = LoadSheet("SeriaFX/FX_Shield");
         }
         bool guardHeld = Held(guardKey), crouchHeld = Held(crouchKey);
+        if (pose != Pose.None && (Pressed(attackKey, attackKey2) || Pressed(heavyKey) || Pressed(skillKey) || Pressed(jumpKey, jumpKey2)))
+        { EndPose(); return false; }                                  // 자세를 끊고 이번 프레임에 바로 행동
 
         if (pose == Pose.None)
         {
-            if (!grounded || busy) return false;
+            if (!grounded) return false;
+            if (busy && (guardHeld || crouchHeld)) CancelAttack();          // 공격 중에도 바로 방어·숙이기
             if (guardHeld && guardFrames.Length >= 8) StartPose(Pose.Guard);
             else if (crouchHeld && proneFrames.Length >= 13) StartPose(Pose.Crouch);
             else return false;
@@ -520,13 +533,35 @@ public class SeriaController : MonoBehaviour
     }
 
     // ── 다른 스크립트(SeriaSkills)용 ──
-    public bool CanAct => !dead && !dashing && !Busy() && pose == Pose.None;
+    public bool CanAct => !dead && pose == Pose.None;
     float suppressHitUntil;
-    // 스킬 시전 모션만 재생 (근접 공격 판정은 하지 않음)
+    // 스킬 시전 모션만 재생 (근접 공격 판정은 하지 않음). 진행 중인 동작은 즉시 캔슬
     public void PlayCastAnimation(string trigger)
     {
-        suppressHitUntil = Time.time + 0.5f;
-        anim.SetTrigger(trigger);
+        if (dashing) EndDash();
+        CancelAttack();
+        string state = trigger == "Heavy" ? "Attack2" : trigger == "Attack" ? "Attack1" : trigger;
+        anim.speed = 1f;
+        anim.Play(state, 0, 0f);
+        lastStateHash = Animator.StringToHash("Base Layer." + state);   // 근접 판정 없이 모션만
+    }
+
+    // ── 즉시 공격 (진행 중인 동작을 끊고 처음부터) ──
+    Coroutine hitCo;
+    void StartAttack(string state, HitBox box, float damage)
+    {
+        if (dashing) EndDash();
+        CancelAttack();
+        anim.speed = 1f;
+        anim.Play(state, 0, 0f);
+        lastStateHash = Animator.StringToHash("Base Layer." + state);   // 자동 감지와 중복 판정 방지
+        hitCo = StartCoroutine(DoHit(box, damage));
+    }
+
+    // 공격 캔슬: 아직 판정이 나가기 전이면 판정도 취소
+    void CancelAttack()
+    {
+        if (hitCo != null) { StopCoroutine(hitCo); hitCo = null; }
     }
 
     // ── 공격 판정 ──
@@ -540,9 +575,9 @@ public class SeriaController : MonoBehaviour
         lastStateHash = info.fullPathHash;
         bool isAttack = info.IsName("Attack1") || info.IsName("Attack2") || info.IsName("Skill");
         if (isAttack && Time.time < suppressHitUntil) { suppressHitUntil = 0f; return; }   // 스킬 시전 모션
-        if (info.IsName("Attack1")) StartCoroutine(DoHit(attackBox, attackDamage));
-        else if (info.IsName("Attack2")) StartCoroutine(DoHit(heavyBox, heavyDamage));
-        else if (info.IsName("Skill")) StartCoroutine(DoHit(skillBox, skillDamage));
+        if (info.IsName("Attack1")) hitCo = StartCoroutine(DoHit(attackBox, attackDamage));
+        else if (info.IsName("Attack2")) hitCo = StartCoroutine(DoHit(heavyBox, heavyDamage));
+        else if (info.IsName("Skill")) hitCo = StartCoroutine(DoHit(skillBox, skillDamage));
     }
 
     IEnumerator DoHit(HitBox box, float damage)
@@ -571,13 +606,14 @@ public class SeriaController : MonoBehaviour
     // ── 대쉬 ──
     bool CanDash(bool grounded, bool busy)
     {
-        if (busy || Time.time < nextDashTime) return false;
+        if (Time.time < nextDashTime) return false;          // 공격 중에도 대쉬로 캔슬 가능
         if (!grounded && (!allowAirDash || airDashUsed)) return false;
         return true;
     }
 
     void StartDash(int dir, bool grounded)
     {
+        CancelAttack(); EndPose();
         dashing = true; dashDir = dir;
         dashEndTime = Time.time + dashDuration;
         nextGhostTime = 0f;

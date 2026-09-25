@@ -20,7 +20,7 @@ public class NpcImporter : AssetPostprocessor
         using (var fs = File.OpenRead(p)) fs.Read(head, 0, 24);
         int w = (head[16] << 24) | (head[17] << 16) | (head[18] << 8) | head[19];
         const int CW = 280, CH = 340; int n = w / CW;
-        ti.spriteImportMode = SpriteImportMode.Multiple; ti.spritePixelsPerUnit = 190;   // 키 약 1.4유닛 (세리아와 비슷)
+        ti.spriteImportMode = SpriteImportMode.Multiple; ti.spritePixelsPerUnit = 200;   // 키 약 1.3유닛 (세리아와 비슷)
         string file = Path.GetFileNameWithoutExtension(p);
         var metas = new SpriteMetaData[n];
         for (int i = 0; i < n; i++)
@@ -63,8 +63,45 @@ public static class NpcTools
         npc.talkFrames = Sheet("Assets/NPC/Chief/Chief_Talk.png");
         npc.portrait = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/NPC/Resources/NPC/Portrait_Chief.png");
         if (npc.idleFrames.Length > 0) sr.sprite = npc.idleFrames[0];
+        npc.dialogue = GetOrCreateChiefDialogue();
         EditorSceneManager.SaveScene(scene);
         Selection.activeGameObject = go;
-        EditorUtility.DisplayDialog("NPC 배치 완료", $"시작 마을 x = {x:0.#} 위치에 마을 이장을 배치했습니다.\n대사는 NPC_VillageChief 의 Lines 에서 입력합니다.", "확인");
+        EditorUtility.DisplayDialog("NPC 배치 완료", $"시작 마을 x = {x:0.#} 위치에 마을 이장을 배치했습니다.\n대사는 Assets/NPC/Dialogues/Chief_Dialogue 에서 수정합니다.", "확인");
+    }
+
+    const string DialoguePath = "Assets/NPC/Dialogues/Chief_Dialogue.asset";
+
+    // 마을 이장 대화 데이터 (없으면 예시 대사로 새로 만듦)
+    public static DialogueData GetOrCreateChiefDialogue()
+    {
+        var d = AssetDatabase.LoadAssetAtPath<DialogueData>(DialoguePath);
+        if (d != null) return d;
+        if (!AssetDatabase.IsValidFolder("Assets/NPC/Dialogues")) AssetDatabase.CreateFolder("Assets/NPC", "Dialogues");
+        d = ScriptableObject.CreateInstance<DialogueData>();
+        d.seriaPortrait = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/NPC/Resources/NPC/Portrait_Seria.png");
+        d.lines = new[]
+        {
+            new DialogueData.Line { speaker = Speaker.Npc,   text = "(예시) 오, 세리아 왔구나." },
+            new DialogueData.Line { speaker = Speaker.Seria, text = "(예시) 이장님, 무슨 일 있으세요?" },
+            new DialogueData.Line { speaker = Speaker.Npc,   text = "(예시) 대사는 Chief_Dialogue 에서 바꿀 수 있단다." },
+        };
+        AssetDatabase.CreateAsset(d, DialoguePath);
+        AssetDatabase.SaveAssets();
+        return d;
+    }
+
+    [MenuItem("Tools/NPC/마을 이장 대사 편집 열기")]
+    public static void EditChiefDialogue()
+    {
+        var d = GetOrCreateChiefDialogue();
+        // 시작 마을의 이장에 연결 (안 되어 있으면)
+        if (File.Exists(Map0) && EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
+        {
+            var sc = EditorSceneManager.OpenScene(Map0);
+            var go = GameObject.Find("NPC_VillageChief");
+            if (go != null) { var npc = go.GetComponent<NpcTalker>(); if (npc != null && npc.dialogue != d) { npc.dialogue = d; EditorUtility.SetDirty(npc); EditorSceneManager.SaveScene(sc); } }
+        }
+        Selection.activeObject = d;
+        EditorGUIUtility.PingObject(d);
     }
 }

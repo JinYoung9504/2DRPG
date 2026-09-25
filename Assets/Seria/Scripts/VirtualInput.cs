@@ -5,7 +5,7 @@ using UnityEngine;
 
 public static class VirtualInput
 {
-    class State { public int holders; public int downFrame = -10, upFrame = -10; public bool downRead, upRead; }
+    class State { public int holders; public int downFrame = -10, upFrame = -10; public bool downRead, upRead; public int downReadFrame = -10, upReadFrame = -10; }
     static readonly Dictionary<KeyCode, State> states = new Dictionary<KeyCode, State>();
 
     static State Get(KeyCode k)
@@ -33,14 +33,16 @@ public static class VirtualInput
     public static bool Down(KeyCode k)
     {
         if (k == KeyCode.None || !states.TryGetValue(k, out var s)) return false;
-        if (!s.downRead && Time.frameCount - s.downFrame <= 1) { s.downRead = true; return true; }
+        if (s.downRead && s.downReadFrame == Time.frameCount) return true;              // 같은 프레임 안에선 여러 번 읽어도 됨
+        if (!s.downRead && Time.frameCount - s.downFrame <= 1) { s.downRead = true; s.downReadFrame = Time.frameCount; return true; }
         return false;
     }
 
     public static bool Up(KeyCode k)
     {
         if (k == KeyCode.None || !states.TryGetValue(k, out var s)) return false;
-        if (!s.upRead && Time.frameCount - s.upFrame <= 1) { s.upRead = true; return true; }
+        if (s.upRead && s.upReadFrame == Time.frameCount) return true;
+        if (!s.upRead && Time.frameCount - s.upFrame <= 1) { s.upRead = true; s.upReadFrame = Time.frameCount; return true; }
         return false;
     }
 

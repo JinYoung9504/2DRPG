@@ -6,7 +6,9 @@ using UnityEngine;
 public class NpcTalker : MonoBehaviour
 {
     public string npcName = "마을 이장";
-    [TextArea(2, 4)] public string[] lines = { "……(대사는 추후 추가 예정)" };
+    [Tooltip("세리아와 주고받는 대사. 비워두면 아래 Lines 를 NPC 혼자 말함")]
+    public DialogueData dialogue;
+    [TextArea(2, 4)] public string[] lines = { "……" };
     public Sprite portrait;
     public Sprite[] idleFrames, talkFrames;
     public float fps = 6f;
@@ -43,6 +45,17 @@ public class NpcTalker : MonoBehaviour
         armed = false; talking = true; iconT = 0; icon.enabled = true;
         float d = Mathf.Sign(player.position.x - transform.position.x);
         sr.flipX = spriteFacesLeft ? d > 0 : d < 0;                          // 플레이어 쪽을 봄
-        DialogueUI.Show(npcName, portrait, lines, () => { talking = false; icon.enabled = false; });
+        System.Action done = () => { talking = false; icon.enabled = false; };
+        if (dialogue != null && dialogue.lines != null && dialogue.lines.Length > 0)
+        {
+            var list = new DialogueUI.Entry[dialogue.lines.Length];
+            for (int i = 0; i < list.Length; i++)
+            {
+                var l = dialogue.lines[i]; bool seria = l.speaker == Speaker.Seria;
+                list[i] = new DialogueUI.Entry { name = seria ? dialogue.seriaName : npcName, face = seria ? dialogue.seriaPortrait : portrait, right = !seria, text = l.text };   // 세리아 왼쪽, NPC 오른쪽
+            }
+            DialogueUI.Show(list, done);
+        }
+        else DialogueUI.Show(npcName, portrait, lines, done);
     }
 }

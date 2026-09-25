@@ -1,4 +1,5 @@
-// 대화창: 왼쪽 얼굴 이미지 + 이름표 + 대사 (한 글자씩 출력)
+// 대화창: 말하는 사람의 얼굴 + 이름표 + 대사 (한 글자씩 출력)
+//  세리아는 왼쪽, NPC 는 오른쪽에 얼굴이 나옴
 //  넘기기: Space / Enter / Ctrl / Z / 마우스 클릭 / 화면 터치
 using System;
 using System.Collections;
@@ -10,21 +11,31 @@ using UnityEngine.InputSystem;
 
 public class DialogueUI : MonoBehaviour
 {
+    public struct Entry { public string name; public Sprite face; public bool right; public string text; }
+
     public static bool IsOpen { get; private set; }
     static DialogueUI inst;
 
-    Text nameText, bodyText; Image portrait; GameObject root; RectTransform nextMark;
-    string[] lines; int index; bool typing; Action onClose; Coroutine typeCo;
+    Text nameText, bodyText; Image portrait; RectTransform plate, body, portraitRt; GameObject root; RectTransform nextMark;
+    Entry[] entries; int index; bool typing; Action onClose; Coroutine typeCo;
     public float charsPerSecond = 35f;
 
-    public static void Show(string speaker, Sprite face, string[] dialogLines, Action onClosed = null)
+    public static void Show(Entry[] list, Action onClosed = null)
     {
-        if (dialogLines == null || dialogLines.Length == 0) return;
+        if (list == null || list.Length == 0) return;
         if (inst == null) { var go = new GameObject("Dialogue UI"); inst = go.AddComponent<DialogueUI>(); inst.Build(); }
-        inst.Open(speaker, face, dialogLines, onClosed);
+        inst.Open(list, onClosed);
     }
 
-    // 한글 폰트: 운영체제 폰트 사용 (없으면 기본 폰트)
+    // 예전 방식 (NPC 혼자 말하기)
+    public static void Show(string speaker, Sprite face, string[] lines, Action onClosed = null)
+    {
+        if (lines == null) return;
+        var list = new Entry[lines.Length];
+        for (int i = 0; i < lines.Length; i++) list[i] = new Entry { name = speaker, face = face, right = true, text = lines[i] };   // NPC 혼자 말할 때도 오른쪽
+        Show(list, onClosed);
+    }
+
     static Font korean;
     public static Font KoreanFont()
     {
@@ -38,12 +49,11 @@ public class DialogueUI : MonoBehaviour
         return korean;
     }
 
-    RectTransform Rt(string n, Transform p, Vector2 aMin, Vector2 aMax, Vector2 oMin, Vector2 oMax)
+    RectTransform Rt(string n, Transform p)
     {
-        var rt = new GameObject(n, typeof(RectTransform)).GetComponent<RectTransform>();
-        rt.SetParent(p, false); rt.anchorMin = aMin; rt.anchorMax = aMax; rt.offsetMin = oMin; rt.offsetMax = oMax;
-        return rt;
+        var rt = new GameObject(n, typeof(RectTransform)).GetComponent<RectTransform>(); rt.SetParent(p, false); return rt;
     }
+    static void Set(RectTransform rt, Vector2 aMin, Vector2 aMax, Vector2 oMin, Vector2 oMax) { rt.anchorMin = aMin; rt.anchorMax = aMax; rt.offsetMin = oMin; rt.offsetMax = oMax; }
 
     Text Txt(RectTransform rt, int size, TextAnchor align, Color c)
     {
@@ -65,40 +75,67 @@ public class DialogueUI : MonoBehaviour
 
         root = new GameObject("Root", typeof(RectTransform));
         var r = (RectTransform)root.transform; r.SetParent(transform, false);
-        r.anchorMin = new Vector2(0.5f, 0); r.anchorMax = new Vector2(0.5f, 0); r.pivot = new Vector2(0.5f, 0);
+        r.anchorMin = r.anchorMax = new Vector2(0.5f, 0); r.pivot = new Vector2(0.5f, 0);
         r.anchoredPosition = new Vector2(0, 40); r.sizeDelta = new Vector2(1400, 300);
 
-        var frame = Rt("Frame", r, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero).gameObject.AddComponent<Image>();
-        frame.sprite = Resources.Load<Sprite>("NPC/Dialog_Frame");
-        var click = frame.gameObject.AddComponent<UIButtonFx>();            // 화면 터치·클릭으로 넘기기
-        click.hoverColor = click.pressColor = Color.white; click.onClick = Advance;
+        // 대화창 틀: 항상 불투명하게 보임
+        var frameRt = Rt("Frame", r); Set(frameRt, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+        var frame = frameRt.gameObject.AddComponent<Image>(); frame.sprite = Resources.Load<Sprite>("NPC/Dialog_Frame"); frame.color = Color.white; frame.raycastTarget = false;
 
-        portrait = Rt("Portrait", r, new Vector2(0, 0), new Vector2(0, 1), new Vector2(18, 18), new Vector2(330, 60)).gameObject.AddComponent<Image>();
-        portrait.preserveAspect = true; portrait.raycastTarget = false;
+        portraitRt = Rt("Portrait", r);
+        portrait = portraitRt.gameObject.AddComponent<Image>(); portrait.preserveAspect = true; portrait.raycastTarget = false;
 
-        var plate = Rt("NamePlate", r, new Vector2(0, 1), new Vector2(0, 1), new Vector2(300, -32), new Vector2(660, 38)).gameObject.AddComponent<Image>();
-        plate.sprite = Resources.Load<Sprite>("NPC/Dialog_NamePlate"); plate.raycastTarget = false;
-        nameText = Txt(Rt("Name", plate.rectTransform, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), 34, TextAnchor.MiddleCenter, new Color(1f, 0.92f, 0.78f));
+        plate = Rt("NamePlate", r);
+        var pimg = plate.gameObject.AddComponent<Image>(); pimg.sprite = Resources.Load<Sprite>("NPC/Dialog_NamePlate"); pimg.raycastTarget = false;
+        var nrt = Rt("Name", plate); Set(nrt, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+        nameText = Txt(nrt, 34, TextAnchor.MiddleCenter, new Color(1f, 0.92f, 0.78f));
 
-        bodyText = Txt(Rt("Body", r, Vector2.zero, Vector2.one, new Vector2(370, 40), new Vector2(-60, -60)), 38, TextAnchor.UpperLeft, Color.white);
+        body = Rt("Body", r);
+        bodyText = Txt(body, 38, TextAnchor.UpperLeft, Color.white);
 
-        nextMark = Rt("Next", r, new Vector2(1, 0), new Vector2(1, 0), new Vector2(-70, 24), new Vector2(-40, 54));
-        var nt = Txt(nextMark, 30, TextAnchor.MiddleCenter, new Color(1f, 0.8f, 0.45f)); nt.font = KoreanFont(); nt.text = "▼";
+        nextMark = Rt("Next", r); Set(nextMark, new Vector2(1, 0), new Vector2(1, 0), new Vector2(-70, 24), new Vector2(-40, 54));
+        Txt(nextMark, 30, TextAnchor.MiddleCenter, new Color(1f, 0.8f, 0.45f)).text = "▼";
+
+        // 클릭·터치 받는 투명 판 (색이 바뀌지 않도록 틀과 분리)
+        var hitRt = Rt("ClickArea", r); Set(hitRt, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+        var hit = hitRt.gameObject.AddComponent<Image>(); hit.color = new Color(1, 1, 1, 0);
+        var fx = hitRt.gameObject.AddComponent<UIButtonFx>();
+        fx.hoverColor = fx.pressColor = new Color(1, 1, 1, 0); fx.onClick = Advance;
+
         root.SetActive(false);
     }
 
-    void Open(string speaker, Sprite face, string[] l, Action closed)
+    void Layout(bool right)
     {
-        lines = l; index = 0; onClose = closed;
-        nameText.text = speaker; portrait.sprite = face; portrait.enabled = face != null;
+        if (!right)
+        {
+            Set(portraitRt, new Vector2(0, 0), new Vector2(0, 1), new Vector2(18, 18), new Vector2(330, 60));
+            Set(plate, new Vector2(0, 1), new Vector2(0, 1), new Vector2(300, -32), new Vector2(660, 38));
+            Set(body, Vector2.zero, Vector2.one, new Vector2(370, 40), new Vector2(-80, -60));
+            portraitRt.localScale = Vector3.one;
+        }
+        else
+        {
+            Set(portraitRt, new Vector2(1, 0), new Vector2(1, 1), new Vector2(-330, 18), new Vector2(-18, 60));
+            Set(plate, new Vector2(1, 1), new Vector2(1, 1), new Vector2(-660, -32), new Vector2(-300, 38));
+            Set(body, Vector2.zero, Vector2.one, new Vector2(80, 40), new Vector2(-370, -60));
+        }
+    }
+
+    void Open(Entry[] list, Action closed)
+    {
+        entries = list; index = 0; onClose = closed;
         root.SetActive(true); IsOpen = true;
         ShowLine();
     }
 
     void ShowLine()
     {
+        var e = entries[index];
+        Layout(e.right);
+        nameText.text = e.name; portrait.sprite = e.face; portrait.enabled = e.face != null;
         if (typeCo != null) StopCoroutine(typeCo);
-        typeCo = StartCoroutine(Type(lines[index]));
+        typeCo = StartCoroutine(Type(e.text ?? ""));
     }
 
     IEnumerator Type(string s)
@@ -111,9 +148,9 @@ public class DialogueUI : MonoBehaviour
     void Advance()
     {
         if (!IsOpen) return;
-        if (typing) { StopCoroutine(typeCo); bodyText.text = lines[index]; typing = false; return; }   // 출력 중이면 한 번에 표시
+        if (typing) { StopCoroutine(typeCo); bodyText.text = entries[index].text; typing = false; return; }
         index++;
-        if (index >= lines.Length) { Close(); return; }
+        if (index >= entries.Length) { Close(); return; }
         ShowLine();
     }
 
@@ -127,7 +164,7 @@ public class DialogueUI : MonoBehaviour
     void Update()
     {
         if (!IsOpen) { openedFrame = Time.frameCount; return; }
-        if (Time.frameCount - openedFrame < 2) return;                         // 열린 직후 같은 키 입력 무시
+        if (Time.frameCount - openedFrame < 2) return;
         nextMark.gameObject.SetActive(!typing && Mathf.Repeat(Time.unscaledTime, 0.8f) < 0.5f);
 #if ENABLE_INPUT_SYSTEM
         var k = Keyboard.current;
