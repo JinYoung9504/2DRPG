@@ -108,7 +108,7 @@ public class SeriaHUD : MonoBehaviour
         var frame = bar.gameObject.AddComponent<Outline>(); frame.effectColor = new Color(0.85f, 0.7f, 0.45f); frame.effectDistance = new Vector2(2, -2);
         hpTrail = Filled(Stretch("Trail", bar, 3), trailColor, Image.FillMethod.Horizontal);
         hpFill = Filled(Stretch("Fill", bar, 3), hpColor, Image.FillMethod.Horizontal);
-        hpText = Txt(Stretch("Percent", bar), 21, TextAnchor.MiddleCenter);
+        hpText = Txt(Stretch("Percent", bar), 19, TextAnchor.MiddleCenter);
 
         // 경험치바
         var eb = Rect("EXP Bar", root, new Vector2(0, 0.5f), new Vector2(120, -22), new Vector2(330, 14), new Vector2(0, 0.5f));
@@ -172,7 +172,8 @@ public class SeriaHUD : MonoBehaviour
         if (trailDelay > 0) trailDelay -= Time.deltaTime; else trail = Mathf.MoveTowards(trail, ratio, Time.deltaTime * 0.8f);
         hpFill.fillAmount = ratio; hpTrail.fillAmount = trail;
         hpFill.color = ratio <= 0.3f ? Color.Lerp(hpLowColor, hpColor, Mathf.PingPong(Time.time * 3f, 1f)) : hpColor;
-        hpText.text = Mathf.CeilToInt(ratio * 100f) + "%";
+        int cur = health != null ? Mathf.CeilToInt(health.CurrentHP) : 0, max = health != null ? Mathf.RoundToInt(health.maxHP) : 0;
+        hpText.text = cur + "/" + max + "  " + Mathf.CeilToInt(ratio * 100f) + "%";
 
         if (level != null)
         {

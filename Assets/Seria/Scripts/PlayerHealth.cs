@@ -53,7 +53,7 @@ public class PlayerHealth : MonoBehaviour
 
     public void Revive()
     {
-        poisonUntil = 0;
+        CurePoison();
         CurrentHP = maxHP;
         invincibleUntil = 0f;
         OnRevived?.Invoke();
@@ -62,7 +62,7 @@ public class PlayerHealth : MonoBehaviour
     // ── 독 (지속 데미지): 무적 시간과 상관없이 1초마다 데미지 ──
     public bool IsPoisoned => Time.time < poisonUntil && !IsDead;
     float poisonUntil, poisonDps, nextTick;
-    SpriteRenderer poisonIcon; Sprite[] poisonFrames;
+    SpriteRenderer poisonIcon; Sprite[] poisonFrames; bool poisonTinted;
 
     public void ApplyPoison(float damagePerSecond, float duration)
     {
@@ -74,7 +74,13 @@ public class PlayerHealth : MonoBehaviour
 
     void PoisonUpdate()
     {
-        if (!IsPoisoned) { if (poisonIcon) poisonIcon.enabled = false; return; }
+        if (!IsPoisoned)
+        {
+            if (poisonIcon) poisonIcon.enabled = false;
+            if (poisonTinted && sr) { sr.color = new Color(1, 1, 1, sr.color.a); poisonTinted = false; }   // 원래 색으로
+            return;
+        }
+        poisonTinted = true;
         if (Time.time >= nextTick)
         {
             nextTick += 1f;
@@ -102,14 +108,12 @@ public class PlayerHealth : MonoBehaviour
         if (sr != null && !IsInvincible) sr.color = new Color(0.85f, 0.7f, 1f, sr.color.a);   // 보랏빛
     }
 
-    public void CurePoison() { poisonUntil = 0; if (sr) sr.color = new Color(1, 1, 1, sr.color.a); }
+    public void CurePoison() { poisonUntil = 0; poisonTinted = false; if (sr) sr.color = new Color(1, 1, 1, sr.color.a); }
 
     // 무적 시간 동안 깜빡임
     void Update()
     {
-        bool wasPoisoned = IsPoisoned;
         PoisonUpdate();
-        if (wasPoisoned && !IsPoisoned && sr) sr.color = new Color(1, 1, 1, sr.color.a);
         if (sr == null || !blinkWhileInvincible) return;
         bool inv = IsInvincible && !IsDead;
         if (inv)

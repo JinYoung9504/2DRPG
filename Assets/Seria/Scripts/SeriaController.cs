@@ -1,6 +1,6 @@
 // 세리아 조작 스크립트
 // ─────────────────────────────────────────────
-//  ← / →  : 이동 (같은 방향 두 번 빠르게 → 대쉬)
+//  ← / →  : 이동 (같은 방향 두 번 빠르게 → 대쉬, 키를 누르고 있는 동안 계속)
 //  Alt    : 점프 (짧게 누르면 낮게, 길게 누르면 높게), 공중에서 한 번 더 → 2단 점프
 //  Ctrl   : 기본 공격 (공격 중에 한 번 더 누르면 강공격으로 이어짐)
 //  Space  : 강공격
@@ -80,7 +80,7 @@ public class SeriaController : MonoBehaviour
     [Header("대쉬 (방향키 두 번 연타)")]
     public float doubleTapTime = 0.25f;   // 두 번 누르는 간격 허용 시간
     public float dashSpeed = 13f;
-    public float dashDuration = 0.18f;
+    public float dashDuration = 0.18f;     // 최소 대쉬 시간 (이후엔 키를 놓을 때까지 계속)
     public float dashCooldown = 0.4f;
     public bool allowAirDash = true;      // 공중 대쉬 허용 (점프 1회당 1번)
     public Color afterImageColor = new Color(1f, 0.55f, 0.65f, 0.6f);
@@ -245,10 +245,13 @@ public class SeriaController : MonoBehaviour
         // ── 대쉬 중 ──
         if (dashing)
         {
-            Vel = new Vector2(dashDir * dashSpeed, 0f);          // 대쉬 중엔 중력 무시
-            if (Time.time >= nextGhostTime) { SpawnAfterImage(); nextGhostTime = Time.time + 0.03f; }
-            anim.SetFloat("Speed", 1f); anim.SetFloat("VelY", 0f); anim.SetBool("Grounded", grounded);
-            if (Time.time >= dashEndTime) EndDash();
+            // 방향키를 누르고 있는 동안 계속 대쉬 (최소 dashDuration 은 유지)
+            bool dashHeld = dashDir < 0 ? Held(leftKey) : Held(rightKey);
+            float vy = Time.time < dashEndTime ? 0f : Vel.y;   // 처음 순간만 중력 무시, 이후 공중이면 떨어짐
+            Vel = new Vector2(dashDir * dashSpeed, vy);
+            if (Time.time >= nextGhostTime) { SpawnAfterImage(); nextGhostTime = Time.time + 0.05f; }
+            anim.SetFloat("Speed", 1f); anim.SetFloat("VelY", vy); anim.SetBool("Grounded", grounded);
+            if (Time.time >= dashEndTime && !dashHeld) EndDash();
             return;
         }
 
