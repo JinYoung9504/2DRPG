@@ -248,6 +248,14 @@ public class SeriaController : MonoBehaviour
         {
             // 방향키를 누르고 있는 동안 계속 대쉬 (최소 dashDuration 은 유지)
             bool dashHeld = dashDir < 0 ? Held(leftKey) : Held(rightKey);
+            // 대쉬 중 점프: 대쉬 속도를 유지한 채 뛰어오름 (공중이면 2단 점프로 사용)
+            if (Pressed(jumpKey, jumpKey2) && (grounded || airJumpsUsed < maxAirJumps))
+            {
+                if (!grounded) airJumpsUsed++;
+                dashEndTime = Mathf.Min(dashEndTime, Time.time);   // 이제부터 중력 적용
+                Vel = new Vector2(Vel.x, grounded ? jumpForce : airJumpForce);
+                Squash(-1f);
+            }
             float vy = Time.time < dashEndTime ? 0f : Vel.y;   // 처음 순간만 중력 무시, 이후 공중이면 떨어짐
             float spd = Time.time < dashEndTime ? dashSpeed : dashSpeed * sustainDashSpeedRatio;   // 지속 대쉬는 절반 속도
             Vel = new Vector2(dashDir * spd, vy);
@@ -582,7 +590,7 @@ public class SeriaController : MonoBehaviour
         dashing = false;
         nextDashTime = Time.time + dashCooldown;
         anim.speed = 1f;
-        Vel = new Vector2(dashDir * moveSpeed, 0f);   // 부드럽게 감속
+        Vel = new Vector2(dashDir * moveSpeed, Vel.y);   // 부드럽게 감속 (점프 중이면 높이 유지)
     }
 
     // 잔상: 현재 모습을 복사해 색을 입히고 서서히 사라지게

@@ -7,8 +7,8 @@ using UnityEngine;
 
 public class WolfImporter : AssetPostprocessor
 {
-    public const int CellW = 560, CellH = 300;
-    public const float PPU = 48f;           // 몸 높이 약 240px → 5유닛 (화면 세로의 절반)
+    public const int CellW = 800, CellH = 440;
+    public const float PPU = 76f;           // 몸 높이 약 380px → 5유닛 (화면 세로의 절반)
 
     void OnPreprocessTexture()
     {
@@ -19,7 +19,7 @@ public class WolfImporter : AssetPostprocessor
         ti.textureType = TextureImporterType.Sprite; ti.alphaIsTransparency = true; ti.mipmapEnabled = false;
         ti.filterMode = FilterMode.Bilinear; ti.textureCompression = TextureImporterCompression.Uncompressed; ti.maxTextureSize = 8192;
         string file = Path.GetFileNameWithoutExtension(p);
-        if (res) { ti.spriteImportMode = SpriteImportMode.Single; ti.spritePixelsPerUnit = 65; return; }   // 파이어볼 약 3유닛
+        if (res) { ti.spriteImportMode = SpriteImportMode.Single; ti.spritePixelsPerUnit = 96; return; }   // 파이어볼 높이 약 3.3유닛 (화면 세로의 1/3)
         byte[] head = new byte[24];
         using (var fs = File.OpenRead(p)) fs.Read(head, 0, 24);
         int w = (head[16] << 24) | (head[17] << 16) | (head[18] << 8) | head[19];
@@ -27,7 +27,7 @@ public class WolfImporter : AssetPostprocessor
         ti.spriteImportMode = SpriteImportMode.Multiple; ti.spritePixelsPerUnit = PPU;
         var metas = new SpriteMetaData[n];
         for (int i = 0; i < n; i++)
-            metas[i] = new SpriteMetaData { name = $"{file}_{i}", rect = new Rect(i * CellW, 0, CellW, CellH), alignment = (int)SpriteAlignment.Custom, pivot = new Vector2(0.5f, 8f / CellH) };
+            metas[i] = new SpriteMetaData { name = $"{file}_{i}", rect = new Rect(i * CellW, 0, CellW, CellH), alignment = (int)SpriteAlignment.Custom, pivot = new Vector2(0.5f, 12f / CellH) };
 #pragma warning disable 618
         ti.spritesheet = metas;
 #pragma warning restore 618

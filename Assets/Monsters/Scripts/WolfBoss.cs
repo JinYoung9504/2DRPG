@@ -2,7 +2,6 @@
 //  패턴 (서로 겹치지 않음, 한 번에 하나)
 //   - 멀면  → 돌진 (멧돼지와 같은 속도) : 20 데미지, 방어로 막으면 패링 → 2초 스턴
 //   - 가까우면 → 할퀴기 : 30 데미지, 방어로 막을 수 있음 (스턴은 없음)
-//   - 돌진+할퀴기 합계 5회 후 다음 공격 → 파이어볼 : 50 데미지, 천천히 일직선, 숙이기로만 피할 수 있음
 //  공격 중에는 맞아도 멈추지 않음(슈퍼아머)
 using System.Collections;
 using UnityEngine;
@@ -19,8 +18,9 @@ public class WolfBoss : MonoBehaviour
 
     [Header("패턴")]
     public float detectRange = 14f;
-    public float clawRange = 3.2f;          // 이보다 가까우면 할퀴기, 멀면 돌진
+    public float clawRange = 4.5f;          // 이보다 가까우면 할퀴기, 멀면 돌진 (늑대 몸이 커서 넉넉하게)
     public int attacksBeforeFireball = 5;
+    public bool useFireball = false;        // 파이어볼 패턴 사용 안 함 (이펙트 교체 전까지)
     public float restTime = 1.0f;           // 공격 사이 쉬는 시간
     public float walkSpeed = 1.6f;
 
@@ -30,12 +30,12 @@ public class WolfBoss : MonoBehaviour
 
     [Header("할퀴기")]
     public float clawWindup = 0.35f;
-    public Vector2 clawBoxOffset = new Vector2(2.2f, 1.6f), clawBoxSize = new Vector2(3.2f, 3.2f);
+    public Vector2 clawBoxOffset = new Vector2(2.6f, 1.8f), clawBoxSize = new Vector2(4f, 3.6f);
 
     [Header("파이어볼")]
     public float fireballSpeed = 3.5f;      // 천천히
     public float fireballWindup = 1.0f;
-    public float fireballHeight = 1.5f;     // 땅에서 파이어볼 중심 높이
+    public float fireballHeight = 2.45f;    // 땅에서 파이어볼 중심 높이 (아래쪽이 숙인 세리아 머리 위를 지나가도록)
 
     public bool spriteFacesLeft = false;    // 원본은 오른쪽을 봄
 
@@ -111,7 +111,7 @@ public class WolfBoss : MonoBehaviour
             return;
         }
 
-        if (count >= attacksBeforeFireball) co = StartCoroutine(Fireball());
+        if (useFireball && count >= attacksBeforeFireball) co = StartCoroutine(Fireball());
         else if (dist > clawRange) co = StartCoroutine(Charge());
         else co = StartCoroutine(Claw());
     }
@@ -143,8 +143,8 @@ public class WolfBoss : MonoBehaviour
         while (Time.time < end && !WallAhead(chargeDir))
         {
             Vel = new Vector2(chargeDir * chargeSpeed, Vel.y);
-            // 플레이어를 지나쳐 멀어지면 멈춤
-            if (player != null && (player.position.x - transform.position.x) * chargeDir < -3f) break;
+            // 플레이어 앞(머리가 닿는 거리)까지 오면 멈춤 → 다음은 할퀴기로 이어짐
+            if (player != null && (player.position.x - transform.position.x) * chargeDir < 2.8f) break;
             if (health.IsStunned) yield break;
             yield return null;
         }
@@ -200,11 +200,11 @@ public class WolfBoss : MonoBehaviour
         // 입 앞에 불덩이가 점점 커짐
         var charge = new GameObject("Fire Charge").AddComponent<SpriteRenderer>();
         charge.sprite = Resources.Load<Sprite>("Wolf/Wolf_Fireball"); charge.sortingOrder = sr.sortingOrder + 2; charge.flipX = dir < 0;
-        Vector3 mouth = transform.position + new Vector3(dir * 2.4f, fireballHeight, 0);
+        Vector3 mouth = transform.position + new Vector3(dir * 3.2f, fireballHeight, 0);
         for (float t = 0; t < fireballWindup; t += Time.deltaTime)
         {
             float k = t / fireballWindup;
-            charge.transform.position = mouth; charge.transform.localScale = Vector3.one * Mathf.Lerp(0.05f, 0.35f, k);
+            charge.transform.position = mouth; charge.transform.localScale = Vector3.one * Mathf.Lerp(0.05f, 0.45f, k);
             charge.color = new Color(1, 1, 1, 0.5f + 0.5f * Mathf.PingPong(t * 6f, 1f));
             sr.color = Color.Lerp(baseColor, new Color(1f, 0.7f, 0.4f), k * 0.6f);
             if (health.IsStunned || health.IsDead) { Destroy(charge.gameObject); yield break; }
@@ -281,9 +281,9 @@ public class WolfFireball : MonoBehaviour
         if (traveled > 22f) { Destroy(gameObject); return; }
 
         // 판정: 불덩이 머리 부분 x, 높이는 땅+0.7 ~ 땅+8 (숙이면 몸 높이 0.55 → 피함)
-        float headX = transform.position.x + dir * 0.9f;
-        Vector2 center = new Vector2(headX, groundY + 0.7f + 4f);
-        foreach (var c in Physics2D.OverlapBoxAll(center, new Vector2(1.2f, 8f), 0f))
+        float headX = transform.position.x + dir * 2.4f;           // 불덩이 머리(앞쪽 둥근 부분)
+        Vector2 center = new Vector2(headX, groundY + 0.75f + 4f);
+        foreach (var c in Physics2D.OverlapBoxAll(center, new Vector2(2.6f, 8f), 0f))
         {
             var hp = c.attachedRigidbody != null ? c.attachedRigidbody.GetComponent<PlayerHealth>() : null;
             if (hp == null || hp.IsDead) continue;

@@ -21,6 +21,9 @@ EditorBuildSettings:
     path: Assets/Scenes/Map3_Golem.unity
     guid: 138ca088123db9944b01a92045a0b9d9
   - enabled: 1
+    path: Assets/Scenes/Map3b_Town4_WolfBoss.unity
+    guid: 53e9e6372af6d3e40b2ee5c38c9868f4
+  - enabled: 1
     path: Assets/Scenes/Map4_SpiritForest.unity
     guid: 5d2a866e07d84b24794c6c44dab64faf
   - enabled: 1

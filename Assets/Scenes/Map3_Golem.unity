@@ -1739,7 +1739,7 @@ Transform:
   - {fileID: 437215247}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1586454279
+--- !u!1 &1621557074
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1747,9 +1747,9 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1586454282}
-  - component: {fileID: 1586454281}
-  - component: {fileID: 1586454280}
+  - component: {fileID: 1621557077}
+  - component: {fileID: 1621557076}
+  - component: {fileID: 1621557075}
   m_Layer: 0
   m_Name: "Portal_Right (\u2192 \uC2DC\uC791\uC758 \uB9C8\uC7444)"
   m_TagString: Untagged
@@ -1757,13 +1757,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1586454280
+--- !u!114 &1621557075
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1586454279}
+  m_GameObject: {fileID: 1621557074}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ca2edc7b3ec831e42a90d0b72cc35059, type: 3}
@@ -1772,13 +1772,13 @@ MonoBehaviour:
   targetScene: Map3b_Town4_WolfBoss
   spawnSide: Left
   showGlow: 1
---- !u!61 &1586454281
+--- !u!61 &1621557076
 BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1586454279}
+  m_GameObject: {fileID: 1621557074}
   m_Enabled: 1
   serializedVersion: 3
   m_Density: 1
@@ -1818,13 +1818,13 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 4}
   m_EdgeRadius: 0
---- !u!4 &1586454282
+--- !u!4 &1621557077
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1586454279}
+  m_GameObject: {fileID: 1621557074}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 29.3, y: -4, z: 0}
@@ -2247,4 +2247,4 @@ SceneRoots:
   - {fileID: 296481996}
   - {fileID: 292996197}
   - {fileID: 2092538169}
-  - {fileID: 1586454282}
+  - {fileID: 1621557077}
