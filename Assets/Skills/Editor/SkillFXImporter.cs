@@ -15,6 +15,9 @@ public class SkillFXImporter : AssetPostprocessor
             case "FX_Lightning": frames = 8; ppu = 42; pivot = new Vector2(0.5f, 0.03f); return true;   // 바닥 기준 (높이 약 6유닛)
             case "FX_Meteor":    frames = 8; ppu = 70; pivot = new Vector2(0.5f, 0.03f); return true;
             case "FX_MeteorSky": frames = 2; ppu = 70; pivot = new Vector2(0.5f, 0.03f); return true;     // 하늘 마법진
+            case "FX_SwordRainCircle": frames = 3; ppu = 45; pivot = new Vector2(0.5f, 0.5f); return true;   // 하늘 마법진 (열리는 3단계)
+            case "FX_SwordRainBlade":  frames = 4; ppu = 120; pivot = new Vector2(0.5f, 0.02f); return true; // 떨어지는 검 (칼끝 기준)
+            case "FX_SwordRainImpact": frames = 1; ppu = 90; pivot = new Vector2(0.5f, 0.1f); return true;   // 검이 꽂힐 때 빛
             case "FX_MeteorSmall": frames = 1; ppu = 37; pivot = new Vector2(0.475f, 0.04f); return true; // 작은 돌 (돌 아래쪽 기준)
         }
         return false;

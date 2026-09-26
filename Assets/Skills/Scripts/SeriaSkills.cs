@@ -1,4 +1,4 @@
-// 레벨로 배우는 스킬: A = 검기(5레벨), S = 번개(10레벨), D = 메테오(20레벨)
+// 레벨로 배우는 스킬: A = 검기(5레벨), S = 번개(10레벨), D = 메테오(20레벨), F = 성검 유성우(30레벨)
 using UnityEngine;
 
 public class SeriaSkills : MonoBehaviour
@@ -18,14 +18,16 @@ public class SeriaSkills : MonoBehaviour
     public Skill swordWave = new Skill { name = "검기",   key = KeyCode.A, unlockLevel = 5,  damage = 15f,  cooldown = 2f };
     public Skill lightning = new Skill { name = "번개",   key = KeyCode.S, unlockLevel = 10, damage = 50f,  cooldown = 6f };
     public Skill meteor    = new Skill { name = "메테오", key = KeyCode.D, unlockLevel = 20, damage = 100f, cooldown = 15f };
+    public Skill swordRain = new Skill { name = "성검 유성우", key = KeyCode.F, unlockLevel = 30, damage = 200f, cooldown = 20f };
 
     [Header("번개·메테오 조준")]
     public float targetRange = 9f;      // 앞쪽 이 거리 안의 가장 가까운 적 위치에 떨어짐
     public float defaultDistance = 4f;  // 적이 없으면 앞쪽 이 거리에 떨어짐
     public float meteorWidth = 6f;      // 메테오 크기(가로 폭, 유닛) — 화면 가로(약 17.8)의 1/3
     public float meteorSmallDamage = 10f; // 메테오 작은 돌 1개당 데미지 (큰 돌은 메테오 Damage)
+    public float swordRainWidth = 7.5f;   // 성검 유성우 마법진 폭 (유닛)
 
-    public Skill[] All => new[] { swordWave, lightning, meteor };
+    public Skill[] All => new[] { swordWave, lightning, meteor, swordRain };
 
     SeriaController ctrl; PlayerLevel lv; SpriteRenderer sr;
     Sprite toastLocked;
@@ -41,6 +43,7 @@ public class SeriaSkills : MonoBehaviour
             if (newLv == swordWave.unlockLevel) Toast.Show(Resources.Load<Sprite>("Skills/Toast_Learn_SwordWave"), 2f);
             if (newLv == lightning.unlockLevel) Toast.Show(Resources.Load<Sprite>("Skills/Toast_Learn_Lightning"), 2f);
             if (newLv == meteor.unlockLevel) Toast.Show(Resources.Load<Sprite>("Skills/Toast_Learn_Meteor"), 2f);
+            if (newLv == swordRain.unlockLevel) Toast.Show(Resources.Load<Sprite>("Skills/Toast_Learn_SwordRain"), 2f);
         };
     }
 
@@ -76,6 +79,12 @@ public class SeriaSkills : MonoBehaviour
             ctrl.PlayCastAnimation("Skill");
             Vector3 p = TargetPoint(dir);
             StartCoroutine(Delay(0.25f, () => MeteorStrike.Cast(p, s.damage, meteorWidth, transform.position.x, meteorSmallDamage)));
+        }
+        else if (s == swordRain)
+        {
+            ctrl.PlayCastAnimation("Skill");
+            Vector3 p = TargetPoint(dir);
+            StartCoroutine(Delay(0.2f, () => SwordRain.Cast(p, s.damage, swordRainWidth, transform.position.x, dir)));
         }
     }
 

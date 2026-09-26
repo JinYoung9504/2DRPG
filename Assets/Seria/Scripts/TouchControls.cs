@@ -70,12 +70,12 @@ public class TouchControls : MonoBehaviour
         Btn(cgo.transform, "Down", Pick(down, "SeriaUI/Btn_Down"), player.crouchKey, L, new Vector2(280, -250), 150);
         Btn(cgo.transform, "Guard", Pick(guard, "SeriaUI/Btn_Guard"), player.guardKey, R, new Vector2(-640, -60), 150);
 
-        // 레벨 스킬 (검기 A / 번개 S / 메테오 D) — 우측 위쪽 줄
+        // 레벨 스킬 (검기 A / 번개 S / 메테오 D / 성검 유성우 F) — 우측 위쪽 줄
         var lvSkills = player.GetComponent<SeriaSkills>();
         if (lvSkills != null)
         {
             var all = lvSkills.All;
-            string[] icons = { "Skills/Icon_SwordWave", "Skills/Icon_Lightning", "Skills/Icon_Meteor" };
+            string[] icons = { "Skills/Icon_SwordWave", "Skills/Icon_Lightning", "Skills/Icon_Meteor", "Skills/Icon_SwordRain" };
             for (int i = 0; i < all.Length; i++)
                 Btn(cgo.transform, all[i].name, Resources.Load<Sprite>(icons[i]), all[i].key, R, new Vector2(-510 + 150 * i, 360), 120);
         }

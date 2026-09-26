@@ -116,13 +116,13 @@ public class SeriaHUD : MonoBehaviour
         expFill = Filled(Stretch("Fill", eb, 2), expColor, Image.FillMethod.Horizontal);
         expText = Txt(Rect("EXP Text", root, new Vector2(0, 0.5f), new Vector2(120, -42), new Vector2(330, 20), new Vector2(0, 0.5f)), 15, TextAnchor.MiddleLeft);
 
-        // 스킬 슬롯: Shift, A, S, D
+        // 스킬 슬롯: Shift, A, S, D, F
         float x = 480, step = 84;
         shiftSlot = MakeSlot(root, x, skillIcon, mobile ? "" : skillKeyLabel);
         if (skills != null)
         {
             var all = skills.All;
-            string[] icons = { "Skills/Icon_SwordWave", "Skills/Icon_Lightning", "Skills/Icon_Meteor" };
+            string[] icons = { "Skills/Icon_SwordWave", "Skills/Icon_Lightning", "Skills/Icon_Meteor", "Skills/Icon_SwordRain" };
             lvSlots = new Slot[all.Length];
             for (int i = 0; i < all.Length; i++)
             {
