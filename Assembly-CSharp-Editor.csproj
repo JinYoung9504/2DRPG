@@ -70,6 +70,7 @@
     <Compile Include="Assets\Seria\Editor\SeriaHUDBuilder.cs" />
     <Compile Include="Assets\Maps\Editor\Map3Builder.cs" />
     <Compile Include="Assets\Monsters\Editor\EntTools.cs" />
+    <Compile Include="Assets\Monsters\Editor\SkeletonArcherTools.cs" />
     <Compile Include="Assets\Backgrounds\Editor\BackgroundBuilder.cs" />
     <Compile Include="Assets\Skills\Editor\SkillFXImporter.cs" />
     <Compile Include="Assets\Seria\Editor\SeriaSpriteImporter.cs" />

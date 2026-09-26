@@ -74,6 +74,7 @@
     <Compile Include="Assets\Maps\Scripts\MapPortal.cs" />
     <Compile Include="Assets\Seria\Scripts\PlayerHealth.cs" />
     <Compile Include="Assets\NPC\Scripts\DialogueUI.cs" />
+    <Compile Include="Assets\Monsters\Scripts\SkeletonArcherEnemy.cs" />
     <Compile Include="Assets\NPC\Scripts\NpcTalker.cs" />
     <Compile Include="Assets\Monsters\Scripts\GolemEnemy.cs" />
     <Compile Include="Assets\Monsters\Scripts\MonsterTalk.cs" />
