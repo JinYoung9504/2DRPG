@@ -86,6 +86,7 @@
     <Compile Include="Assets\Backgrounds\Scripts\ParallaxFit.cs" />
     <Compile Include="Assets\Seria\Scripts\TouchControls.cs" />
     <Compile Include="Assets\Monsters\Scripts\TreeBossEnemy.cs" />
+    <Compile Include="Assets\Monsters\Scripts\NecromancerEnemy.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
