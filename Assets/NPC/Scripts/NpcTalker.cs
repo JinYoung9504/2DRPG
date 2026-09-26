@@ -61,7 +61,7 @@ public class NpcTalker : MonoBehaviour
             for (int i = 0; i < list.Length; i++)
             {
                 var l = dialogue.lines[i]; bool seria = l.speaker == Speaker.Seria;
-                list[i] = new DialogueUI.Entry { name = seria ? dialogue.seriaName : npcName, face = seria ? dialogue.seriaPortrait : portrait, right = !seria, text = l.text };   // 세리아 왼쪽, NPC 오른쪽
+                list[i] = new DialogueUI.Entry { name = seria ? dialogue.seriaName : npcName, face = l.face != null ? l.face : (seria ? dialogue.seriaPortrait : portrait), right = !seria, text = l.text };   // 세리아 왼쪽, NPC 오른쪽
             }
             DialogueUI.Show(list, done);
         }

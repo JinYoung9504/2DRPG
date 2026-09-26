@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b9461bd2d3c90941a3a807808e4542a, type: 3}
+  m_Name: Knight_Dialogue
+  m_EditorClassIdentifier: Assembly-CSharp::DialogueData
+  seriaName: "\uC138\uB9AC\uC544"
+  seriaPortrait: {fileID: 21300000, guid: 160263b239bfdf24ca86e30a94a42e07, type: 3}
+  lines:
+  - speaker: 0
+    text: "\u2026\uB204\uAD6C\uB0D0. \uC774\uACF3\uC740 \uC0B0 \uC790\uAC00 \uC62C
+      \uACF3\uC774 \uC544\uB2C8\uB2E4."
+    face: {fileID: 21300000, guid: 75fa7a883775c774b96088d252dbf308, type: 3}
+  - speaker: 1
+    text: "\uB2F9\uC2E0\uC740\u2026 \uC774 \uC131\uC758 \uAE30\uC0AC\uC778\uAC00\uC694?"
+    face: {fileID: 0}
+  - speaker: 0
+    text: ........................
+    face: {fileID: 21300000, guid: c0d97b43c90676d49be06fb1a77aa502, type: 3}
+  - speaker: 0
+    text: "\u2026\uC138\uB9AC\uC544\u2026? "
+    face: {fileID: 21300000, guid: 47052a4cc3c71614c9351f86a9753009, type: 3}
+  - speaker: 1
+    text: "\uCE74\uC624...\uB4DC?"
+    face: {fileID: 21300000, guid: 160263b239bfdf24ca86e30a94a42e07, type: 3}
+  - speaker: 0
+    text: "\uC138\uB9AC\uC544... \uB354 \uC774\uC0C1 \uC9C0\uB098\uAC00\uC9C0 \uB9D0\uAC70\uB77C"
+    face: {fileID: 21300000, guid: 75fa7a883775c774b96088d252dbf308, type: 3}
+  - speaker: 0
+    text: "\uC774 \uC55E\uC740 \uC6B0\uB9AC \uC655\uAD6D\uC744 \uBA78\uB9DD\uC2DC\uD0A8
+      \uADF8 \uC874\uC7AC\uAC00 \uB3C4\uC0AC\uB9AC\uACE0 \uC788\uB2E4"
+    face: {fileID: 21300000, guid: 75fa7a883775c774b96088d252dbf308, type: 3}
+  - speaker: 1
+    text: "\uB2F9\uC2E0\uC740 \uC65C \uC774\uB807\uAC8C \uB410\uB098\uC694?!"
+    face: {fileID: 21300000, guid: 160263b239bfdf24ca86e30a94a42e07, type: 3}
