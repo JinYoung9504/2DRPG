@@ -132,7 +132,7 @@ public static class VampireTools
         rb.sleepMode = RigidbodySleepMode2D.NeverSleep;
         var body = go.AddComponent<CapsuleCollider2D>(); body.size = new Vector2(1.1f, 2.1f); body.offset = new Vector2(0, 1.05f);
         var hit = go.AddComponent<BoxCollider2D>(); hit.isTrigger = true; hit.size = new Vector2(1.2f, 2.1f); hit.offset = new Vector2(0, 1.05f);
-        var hp = go.AddComponent<EnemyHealth>(); hp.maxHP = 350f; hp.hpBarOffset = new Vector2(0, 2.7f); hp.deathAnimTime = 1.3f;
+        var hp = go.AddComponent<EnemyHealth>(); hp.maxHP = 900f; hp.hpBarOffset = new Vector2(0, 2.7f); hp.deathAnimTime = 1.3f;
         hp.isBoss = true; hp.bossId = "VampireLord";
         var v = go.AddComponent<VampireBoss>(); v.damage = 50f; v.expReward = 400;
         v.necromancerPrefab = NecroPrefab();
@@ -212,7 +212,7 @@ public static class VampireTools
         var stage = Find<StageBounds>()[0];
         Create(new Vector3(Mathf.Lerp(stage.left, stage.right, 0.7f), FeetY + 0.05f, 0));
         EditorSceneManager.SaveScene(scene);
-        EditorUtility.DisplayDialog("맵 추가 완료", "멸망한 왕국 성곽4(Map11)에 중간 보스 뱀파이어를 배치했습니다.\n\n체력 350 / 공격력 50 / 경험치 400\n10초마다 네크로맨서 소환 (이 맵 소환수는 경험치 없음)\n\n대사: Tools > Monsters > 뱀파이어 보스 대사 편집 열기", "확인");
+        EditorUtility.DisplayDialog("맵 추가 완료", "멸망한 왕국 성곽4(Map11)에 중간 보스 뱀파이어를 배치했습니다.\n\n체력 900 / 공격력 50 / 경험치 400\n10초마다 네크로맨서 소환 (이 맵 소환수는 경험치 없음)\n\n대사: Tools > Monsters > 뱀파이어 보스 대사 편집 열기", "확인");
     }
 
     static T[] Find<T>() where T : Object

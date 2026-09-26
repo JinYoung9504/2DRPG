@@ -1096,8 +1096,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f2abb41c464cfa46ba702fea7990614, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AtakhanBoss
-  swingRatio: 0.4
-  waveRatio: 0.8
+  swingRatio: 0.2
+  waveRatio: 0.5
   expReward: 1000
   appearRange: 11
   swingRange: 3.2
@@ -1112,6 +1112,7 @@ MonoBehaviour:
   chargeSpeed: 9
   chargeMaxTime: 1.6
   attacksPerSummon: 3
+  summonKinds: 2
   wolfPrefab: {fileID: 5366303819771886557, guid: a381e6b4c4c702943aeb6a1a8971a398, type: 3}
   treePrefab: {fileID: 5287733524343645410, guid: 691c853375184b24fab759ae6d012f03, type: 3}
   vampirePrefab: {fileID: 7421817982767609902, guid: 03ee497fd6f0cc64a992473fd4f2ac03, type: 3}
@@ -1128,7 +1129,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94a45804812636f4c9e506a8446103d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyHealth
-  maxHP: 1500
+  maxHP: 3000
   respawnTime: 5
   isBoss: 1
   bossId: Atakhan

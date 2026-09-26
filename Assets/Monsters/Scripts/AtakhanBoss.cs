@@ -1,9 +1,9 @@
 // 최종 보스: 아타칸 (왕좌의 간)
-//  체력 1500 / 경험치 1000 / 쓰러지면 다시 나타나지 않음
+//  체력 3000 / 경험치 1000 / 쓰러지면 다시 나타나지 않음
 //  - 세리아가 가까이 오면 맵 중앙에 마법진과 함께 등장
-//  - 근접: 대검 휘두르기 — 세리아 최대 체력의 40%
-//  - 원거리: 대형 검기 발사 — 세리아 최대 체력의 80%, 쏜 뒤 세리아를 향해 돌진
-//  - 휘두르기/검기를 3번 쓸 때마다: 늑대 + 타락한 나무정령 + 뱀파이어를 한꺼번에 소환
+//  - 근접: 대검 휘두르기 — 세리아 최대 체력의 20%
+//  - 원거리: 대형 검기 발사 — 세리아 최대 체력의 50%, 쏜 뒤 세리아를 향해 돌진
+//  - 휘두르기/검기를 3번 쓸 때마다: 늑대 · 타락한 나무정령 · 뱀파이어 중 무작위 2종 소환
 //      · 이전 소환수가 남아 있어도 계속 소환 / 소환수는 경험치 없음
 //      · 아타칸이 쓰러지면 소환수도 모두 무너짐
 //  - 공격은 방어(X)로 막을 수 있음 (스턴 없음), 공격 중엔 맞아도 멈추지 않음
@@ -18,8 +18,8 @@ public class SummonedMinion : MonoBehaviour { }
 public class AtakhanBoss : MonoBehaviour
 {
     [Header("수치")]
-    [Range(0f, 1f)] public float swingRatio = 0.4f;   // 대검: 세리아 최대 체력의 40%
-    [Range(0f, 1f)] public float waveRatio = 0.8f;    // 검기: 세리아 최대 체력의 80%
+    [Range(0f, 1f)] public float swingRatio = 0.2f;   // 대검: 세리아 최대 체력의 20%
+    [Range(0f, 1f)] public float waveRatio = 0.5f;    // 검기: 세리아 최대 체력의 50%
     public int expReward = 1000;
 
     [Header("등장")]
@@ -43,6 +43,7 @@ public class AtakhanBoss : MonoBehaviour
 
     [Header("소환")]
     public int attacksPerSummon = 3;
+    public int summonKinds = 2;            // 한 번에 소환하는 종류 수 (3종 중 무작위)
     public GameObject wolfPrefab, treePrefab, vampirePrefab;
 
     public bool spriteFacesLeft = false;
@@ -222,10 +223,13 @@ public class AtakhanBoss : MonoBehaviour
         float x = transform.position.x;
         var spots = new[] { Clamp(x - 6f), Clamp(x + 6f), Clamp(x + (Random.value < 0.5f ? -3f : 3f)) };
         var prefabs = new[] { wolfPrefab, treePrefab, vampirePrefab };
-        for (int i = 0; i < 3; i++) if (prefabs[i] != null) AtakhanFX.Summon(new Vector3(spots[i], transform.position.y, 0), 1.2f);
+        // 3종 중 무작위 2종
+        var pick = new List<int>(); for (int i = 0; i < 3; i++) if (prefabs[i] != null) pick.Add(i);
+        while (pick.Count > summonKinds) pick.RemoveAt(Random.Range(0, pick.Count));
+        for (int k = 0; k < pick.Count; k++) AtakhanFX.Summon(new Vector3(spots[k], transform.position.y, 0), 1.2f);
         yield return new WaitForSeconds(0.7f);
         if (!health.IsDead)
-            for (int i = 0; i < 3; i++) if (prefabs[i] != null) Spawn(prefabs[i], new Vector3(spots[i], transform.position.y + 0.05f, 0));
+            for (int k = 0; k < pick.Count; k++) Spawn(prefabs[pick[k]], new Vector3(spots[k], transform.position.y + 0.05f, 0));
         yield return new WaitForSeconds(0.4f);
         Done(false);
     }

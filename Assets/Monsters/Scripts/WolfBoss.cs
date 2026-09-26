@@ -14,7 +14,7 @@ public class WolfBoss : MonoBehaviour
     public float clawDamage = 30f;
     public float fireballDamage = 50f;
     public float touchDamage = 5f;          // 평소 몸에 닿았을 때 (따로 정하지 않아 임시)
-    public int expReward = 100;
+    public int expReward = 200;
 
     [Header("패턴")]
     public float detectRange = 14f;

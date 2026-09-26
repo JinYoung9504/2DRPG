@@ -241,7 +241,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94a45804812636f4c9e506a8446103d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyHealth
-  maxHP: 300
+  maxHP: 500
   respawnTime: 5
   isBoss: 1
   bossId: CorruptedTreeSpirit
@@ -261,7 +261,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TreeBossEnemy
   rootDamage: 50
   touchDamage: 10
-  expReward: 200
+  expReward: 300
   detectRange: 14
   walkSpeed: 0.35
   keepDistance: 3.5

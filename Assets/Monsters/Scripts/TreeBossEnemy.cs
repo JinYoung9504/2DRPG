@@ -15,7 +15,7 @@ public class TreeBossEnemy : MonoBehaviour
     [Header("수치")]
     public float rootDamage = 50f;
     public float touchDamage = 10f;        // 몸에 닿았을 때 (따로 정하지 않아 임시)
-    public int expReward = 200;
+    public int expReward = 300;
 
     [Header("행동")]
     public float detectRange = 14f;

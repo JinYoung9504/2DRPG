@@ -12,7 +12,7 @@ public class NecromancerEnemy : MonoBehaviour
 {
     [Header("수치")]
     public float meleeDamage = 10f;
-    public int expReward = 100;
+    public int expReward = 150;
 
     [Header("감지 · 이동")]
     public float detectRange = 10f;

@@ -1333,7 +1333,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NecromancerEnemy
   meleeDamage: 10
-  expReward: 100
+  expReward: 150
   detectRange: 10
   heightTolerance: 2.5
   walkSpeed: 0.9
@@ -1364,7 +1364,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94a45804812636f4c9e506a8446103d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyHealth
-  maxHP: 175
+  maxHP: 250
   respawnTime: 5
   isBoss: 0
   bossId: 
@@ -1742,7 +1742,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NecromancerEnemy
   meleeDamage: 10
-  expReward: 100
+  expReward: 150
   detectRange: 10
   heightTolerance: 2.5
   walkSpeed: 0.9
@@ -1773,7 +1773,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94a45804812636f4c9e506a8446103d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyHealth
-  maxHP: 175
+  maxHP: 250
   respawnTime: 5
   isBoss: 0
   bossId: 

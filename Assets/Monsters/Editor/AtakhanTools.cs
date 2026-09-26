@@ -183,7 +183,7 @@ public static class AtakhanTools
         var rb = go.AddComponent<Rigidbody2D>(); rb.freezeRotation = true; rb.gravityScale = 3f; rb.mass = 50f; rb.sleepMode = RigidbodySleepMode2D.NeverSleep;
         var body = go.AddComponent<CapsuleCollider2D>(); body.size = new Vector2(1.6f, 3.8f); body.offset = new Vector2(0, 1.9f);
         var hit = go.AddComponent<BoxCollider2D>(); hit.isTrigger = true; hit.size = new Vector2(1.9f, 3.8f); hit.offset = new Vector2(0, 1.9f);
-        var hp = go.AddComponent<EnemyHealth>(); hp.maxHP = 1500f; hp.hpBarOffset = new Vector2(0, 4.9f); hp.deathAnimTime = 1.6f;
+        var hp = go.AddComponent<EnemyHealth>(); hp.maxHP = 3000f; hp.hpBarOffset = new Vector2(0, 4.9f); hp.deathAnimTime = 1.6f;
         hp.isBoss = true; hp.bossId = "Atakhan";
         var a = go.AddComponent<AtakhanBoss>(); a.expReward = 1000;
         a.wolfPrefab = wolf; a.treePrefab = tree; a.vampirePrefab = vamp;
@@ -191,7 +191,7 @@ public static class AtakhanTools
         Selection.activeGameObject = go;
         string miss = (wolf == null ? " 늑대" : "") + (tree == null ? " 나무정령" : "") + (vamp == null ? " 뱀파이어" : "");
         EditorUtility.DisplayDialog("아타칸 배치 완료",
-            "왕좌의 간 중앙에 최종 보스 아타칸을 배치했습니다.\n체력 1500 / 대검 = 세리아 최대 체력 40% / 검기 = 80% / 경험치 1000"
+            "왕좌의 간 중앙에 최종 보스 아타칸을 배치했습니다.\n체력 3000 / 대검 = 세리아 최대 체력 20% / 검기 = 50% / 경험치 1000"
             + (miss.Length > 0 ? "\n\n※ 소환수 원본을 찾지 못함:" + miss + "\n  (해당 보스 맵을 먼저 만든 뒤 다시 실행하세요)" : ""), "확인");
     }
 }

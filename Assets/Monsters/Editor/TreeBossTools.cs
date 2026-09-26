@@ -79,7 +79,7 @@ public static class TreeBossTools
         var rb = go.AddComponent<Rigidbody2D>(); rb.freezeRotation = true; rb.gravityScale = 3f; rb.mass = 50f; rb.sleepMode = RigidbodySleepMode2D.NeverSleep;
         var body = go.AddComponent<CapsuleCollider2D>(); body.size = new Vector2(3.2f, 3.8f); body.offset = new Vector2(0, 1.9f);
         var hit = go.AddComponent<BoxCollider2D>(); hit.isTrigger = true; hit.size = new Vector2(3f, 3.6f); hit.offset = new Vector2(0, 1.8f);
-        var hp = go.AddComponent<EnemyHealth>(); hp.maxHP = 300f; hp.hpBarOffset = new Vector2(0, 4.3f); hp.deathAnimTime = 1.3f;
+        var hp = go.AddComponent<EnemyHealth>(); hp.maxHP = 500f; hp.hpBarOffset = new Vector2(0, 4.3f); hp.deathAnimTime = 1.3f;
         hp.isBoss = true; hp.bossId = "CorruptedTreeSpirit";
         var ai = go.AddComponent<TreeBossEnemy>(); ai.rootDamage = 50f; ai.expReward = 200;
         Undo.RegisterCreatedObjectUndo(go, "Create Tree Boss");

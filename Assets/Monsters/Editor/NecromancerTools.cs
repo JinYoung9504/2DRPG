@@ -143,8 +143,8 @@ public static class NecromancerTools
         rb.sleepMode = RigidbodySleepMode2D.NeverSleep;
         var body = go.AddComponent<CapsuleCollider2D>(); body.size = new Vector2(0.8f, 1.35f); body.offset = new Vector2(0, 0.68f);
         var hit = go.AddComponent<BoxCollider2D>(); hit.isTrigger = true; hit.size = new Vector2(0.9f, 1.35f); hit.offset = new Vector2(0, 0.68f);
-        var hp = go.AddComponent<EnemyHealth>(); hp.maxHP = 175f; hp.hpBarOffset = new Vector2(0, 1.75f); hp.deathAnimTime = 1.0f;
-        var n = go.AddComponent<NecromancerEnemy>(); n.meleeDamage = 10f; n.expReward = 100;
+        var hp = go.AddComponent<EnemyHealth>(); hp.maxHP = 250f; hp.hpBarOffset = new Vector2(0, 1.75f); hp.deathAnimTime = 1.0f;
+        var n = go.AddComponent<NecromancerEnemy>(); n.meleeDamage = 10f; n.expReward = 150;
         n.swordsmanPrefab = sword; n.archerPrefab = archer;
         Undo.RegisterCreatedObjectUndo(go, "Create Necromancer");
         return go;
@@ -208,7 +208,7 @@ public static class NecromancerTools
         var xs = new[] { 0.5f, 0.85f }.Select(k => Mathf.Lerp(stage.left, stage.right, k)).ToArray();   // 2마리
         foreach (var x in xs) Create(new Vector3(x, FeetY, 0), ctrl, sword, archer);
         EditorSceneManager.SaveScene(scene);
-        EditorUtility.DisplayDialog("성곽3 완료", $"멸망한 왕국 성곽3(Map10)에 네크로맨서 {xs.Length}마리를 배치했습니다.\n(x = {string.Join(", ", xs.Select(x => x.ToString("0.#")))})\n\n체력 175 / 근접 공격 10 / 경험치 100\n멀리서 세리아를 보면 스켈레톤 검사 + 궁수 소환", "확인");
+        EditorUtility.DisplayDialog("성곽3 완료", $"멸망한 왕국 성곽3(Map10)에 네크로맨서 {xs.Length}마리를 배치했습니다.\n(x = {string.Join(", ", xs.Select(x => x.ToString("0.#")))})\n\n체력 250 / 근접 공격 10 / 경험치 150\n멀리서 세리아를 보면 스켈레톤 검사 + 궁수 소환", "확인");
     }
 
     [MenuItem("Tools/Monsters/선택 위치에 네크로맨서 1마리 추가")]

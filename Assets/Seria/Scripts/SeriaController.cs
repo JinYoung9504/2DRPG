@@ -96,6 +96,7 @@ public class SeriaController : MonoBehaviour
     bool dead;
     float coyoteCounter, jumpBufferCounter;
     int airJumpsUsed;
+    int comboStep; float comboUntil;       // 기본 공격 콤보: 1타 · 2타 기본 공격 → 3타 강공격
     // 대쉬 상태
     float lastTapTime = -1f; int lastTapDir;
     bool dashing, airDashUsed; float dashEndTime, nextDashTime, nextGhostTime; int dashDir;
@@ -330,12 +331,20 @@ public class SeriaController : MonoBehaviour
         Vel = v;
 
         // ── 공격 ──
-        // 어떤 동작 중이든 즉시 새 공격으로 전환 (기본 공격을 이어 누르면 콤보 → 강공격)
+        // 어떤 동작 중이든 즉시 새 공격으로 전환 (기본 공격 1타 → 2타 → 3타는 강공격)
         if (Pressed(attackKey, attackKey2))
         {
             var cur = anim.GetCurrentAnimatorStateInfo(0);
-            bool combo = cur.IsName("Attack1") && cur.normalizedTime > 0.35f;
-            if (combo) StartAttack("Attack2", heavyBox, heavyDamage); else StartAttack("Attack1", attackBox, attackDamage);
+            bool chain = Time.time < comboUntil && cur.IsName("Attack1") && cur.normalizedTime > 0.35f;   // 앞 공격이 어느 정도 나간 뒤 이어 누름
+            comboStep = chain ? comboStep + 1 : 1;
+            comboUntil = Time.time + 0.9f;
+            if (comboStep >= 3)
+            {
+                comboStep = 0;
+                StartAttack("Attack2", heavyBox, heavyDamage);                                   // 3타: 강공격
+                StartCoroutine(Fx(slashFx, 0.25f, new Vector2(0.6f, 0.7f), 0.25f));
+            }
+            else StartAttack("Attack1", attackBox, attackDamage);                               // 1타 · 2타: 기본 공격
         }
         if (Pressed(heavyKey)) { StartAttack("Attack2", heavyBox, heavyDamage); StartCoroutine(Fx(slashFx, 0.25f, new Vector2(0.6f, 0.7f), 0.25f)); }
         if (Pressed(skillKey) && SkillCooldownRemaining <= 0f)   // 쿨타임이 다 차야 사용 가능

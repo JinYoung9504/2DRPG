@@ -516,7 +516,7 @@ MonoBehaviour:
   clawDamage: 30
   fireballDamage: 50
   touchDamage: 5
-  expReward: 100
+  expReward: 200
   detectRange: 14
   clawRange: 4.5
   attacksBeforeFireball: 5
@@ -545,7 +545,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94a45804812636f4c9e506a8446103d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyHealth
-  maxHP: 150
+  maxHP: 300
   respawnTime: 30
   isBoss: 0
   bossId: 

@@ -112,7 +112,7 @@ public static class WolfTools
         var rb = go.AddComponent<Rigidbody2D>(); rb.freezeRotation = true; rb.gravityScale = 3f; rb.mass = 20f; rb.sleepMode = RigidbodySleepMode2D.NeverSleep;
         var body = go.AddComponent<CapsuleCollider2D>(); body.direction = CapsuleDirection2D.Horizontal; body.size = new Vector2(4.2f, 3.4f); body.offset = new Vector2(0, 1.7f);
         var hit = go.AddComponent<BoxCollider2D>(); hit.isTrigger = true; hit.size = new Vector2(3.8f, 3.2f); hit.offset = new Vector2(0, 1.6f);
-        var hp = go.AddComponent<EnemyHealth>(); hp.maxHP = 150f; hp.hpBarOffset = new Vector2(0, 5.4f); hp.respawnTime = 30f;
+        var hp = go.AddComponent<EnemyHealth>(); hp.maxHP = 300f; hp.hpBarOffset = new Vector2(0, 5.4f); hp.respawnTime = 30f;
         go.AddComponent<WolfBoss>();
         Apply(go, ctrl);
         Undo.RegisterCreatedObjectUndo(go, "Create Wolf Boss");
