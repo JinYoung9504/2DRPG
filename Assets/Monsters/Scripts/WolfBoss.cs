@@ -107,7 +107,7 @@ public class WolfBoss : MonoBehaviour
         if (Time.time < restUntil)
         {
             // 쉬는 동안: 너무 멀면 천천히 다가옴
-            if (dist > clawRange + 1.5f) { Vel = new Vector2(Mathf.Sign(dx) * walkSpeed, Vel.y); anim.Play("Run"); anim.speed = 0.6f; }
+            if (dist > clawRange + 1.5f) { Vel = new Vector2(Mathf.Sign(dx) * walkSpeed, Vel.y); anim.Play("Walk"); }
             else { Vel = new Vector2(0, Vel.y); anim.Play("Idle"); }
             return;
         }
@@ -132,14 +132,14 @@ public class WolfBoss : MonoBehaviour
         Vel = new Vector2(0, Vel.y);
         chargeDir = Facing;
         DamagePopup.ShowText(transform.position + new Vector3(0, 5.3f, 0), "!", new Color(1f, 0.3f, 0.2f));
-        anim.Play("Idle", 0, 0f);
+        anim.Play("ChargeReady", 0, 0f);   // 몸을 낮추고 힘을 모음
         for (float t = 0; t < chargeWindup; t += Time.deltaTime)
         {
             sr.color = Color.Lerp(baseColor, new Color(1f, 0.55f, 0.5f), Mathf.PingPong(t * 8f, 1f));
             yield return null;
         }
         sr.color = baseColor;
-        anim.Play("Run", 0, 0f); anim.speed = 1.8f;
+        anim.Play("ChargeRun", 0, 0f);
         float end = Time.time + chargeMaxTime;
         while (Time.time < end && !WallAhead(chargeDir))
         {

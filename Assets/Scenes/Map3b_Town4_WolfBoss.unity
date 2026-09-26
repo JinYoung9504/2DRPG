@@ -520,6 +520,7 @@ MonoBehaviour:
   detectRange: 14
   clawRange: 4.5
   attacksBeforeFireball: 5
+  useFireball: 0
   restTime: 1
   walkSpeed: 1.6
   chargeSpeed: 10
@@ -546,7 +547,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyHealth
   maxHP: 150
   respawnTime: 30
-  deathAnimTime: 1
+  isBoss: 0
+  bossId: 
+  deathAnimTime: 1.1
   hpBarOffset: {x: 0, y: 5.4}
 --- !u!61 &728193698
 BoxCollider2D:
@@ -585,8 +588,8 @@ BoxCollider2D:
   m_Offset: {x: 0, y: 1.6}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.027272727}
-    oldSize: {x: 10.526316, y: 5.7894735}
+    pivot: {x: 0.5, y: 0.08421053}
+    oldSize: {x: 9.111111, y: 5.2777777}
     newSize: {x: 10.526316, y: 5.7894735}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -668,7 +671,7 @@ Animator:
   m_GameObject: {fileID: 728193695}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 96a8d093ddedbfe48b9ce54985c76ecb, type: 2}
+  m_Controller: {fileID: 9100000, guid: b137e413db62cdf4cbe1a0cafb0c3c38, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0

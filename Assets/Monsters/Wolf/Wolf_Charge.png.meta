@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 3646aa91260e84242ad09ae8b5422e11
+guid: 0755683ab1e41fb44b97d734059635c6
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -110,177 +110,111 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Wolf_Run_0
+      name: Wolf_Charge_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 976
-        height: 396
+        width: 904
+        height: 344
       alignment: 9
-      pivot: {x: 0.5, y: 0.08080808}
+      pivot: {x: 0.5, y: 0.093023255}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 1cf22a2499ec42100800000000000000
-      internalID: 82417850842755009
+      spriteID: 6347baaf1d00e4ac0800000000000000
+      internalID: -3869154128010972106
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Wolf_Run_1
+      name: Wolf_Charge_1
       rect:
         serializedVersion: 2
-        x: 976
+        x: 904
         y: 0
-        width: 976
-        height: 396
+        width: 904
+        height: 344
       alignment: 9
-      pivot: {x: 0.5, y: 0.08080808}
+      pivot: {x: 0.5, y: 0.093023255}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 2ebb3b700826aa900800000000000000
-      internalID: 696477394406718434
+      spriteID: 887b3fd84cb82a100800000000000000
+      internalID: 117810216576464776
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Wolf_Run_2
+      name: Wolf_Charge_2
       rect:
         serializedVersion: 2
-        x: 1952
+        x: 1808
         y: 0
-        width: 976
-        height: 396
+        width: 904
+        height: 344
       alignment: 9
-      pivot: {x: 0.5, y: 0.08080808}
+      pivot: {x: 0.5, y: 0.093023255}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: ba7963b3da13b6890800000000000000
-      internalID: -7463817337343928405
+      spriteID: 45f43026cf09fa310800000000000000
+      internalID: 1418511821295538004
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Wolf_Run_3
+      name: Wolf_Charge_3
       rect:
         serializedVersion: 2
-        x: 2928
+        x: 2712
         y: 0
-        width: 976
-        height: 396
+        width: 904
+        height: 344
       alignment: 9
-      pivot: {x: 0.5, y: 0.08080808}
+      pivot: {x: 0.5, y: 0.093023255}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: a8e875372546ee690800000000000000
-      internalID: -7571003618278011254
+      spriteID: 54d1dad983f9c6820800000000000000
+      internalID: 2912878124514221381
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Wolf_Run_4
+      name: Wolf_Charge_4
       rect:
         serializedVersion: 2
-        x: 3904
+        x: 3616
         y: 0
-        width: 976
-        height: 396
+        width: 904
+        height: 344
       alignment: 9
-      pivot: {x: 0.5, y: 0.08080808}
+      pivot: {x: 0.5, y: 0.093023255}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: f8d6dc2f210c368d0800000000000000
-      internalID: -2854226551207268977
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Wolf_Run_5
-      rect:
-        serializedVersion: 2
-        x: 4880
-        y: 0
-        width: 976
-        height: 396
-      alignment: 9
-      pivot: {x: 0.5, y: 0.08080808}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 839051e87ffd2b8f0800000000000000
-      internalID: -526111952115267272
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Wolf_Run_6
-      rect:
-        serializedVersion: 2
-        x: 5856
-        y: 0
-        width: 976
-        height: 396
-      alignment: 9
-      pivot: {x: 0.5, y: 0.08080808}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: ec633e38392bbbb50800000000000000
-      internalID: 6610073224738977486
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Wolf_Run_7
-      rect:
-        serializedVersion: 2
-        x: 6832
-        y: 0
-        width: 976
-        height: 396
-      alignment: 9
-      pivot: {x: 0.5, y: 0.08080808}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: c7cd041d38f242620800000000000000
-      internalID: 2748373915800755324
+      spriteID: c78bbd7939aec13e0800000000000000
+      internalID: -2081531008123160452
       vertices: []
       indices: 
       edges: []
@@ -299,14 +233,11 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Wolf_Run_0: 82417850842755009
-      Wolf_Run_1: 696477394406718434
-      Wolf_Run_2: -7463817337343928405
-      Wolf_Run_3: -7571003618278011254
-      Wolf_Run_4: -2854226551207268977
-      Wolf_Run_5: -526111952115267272
-      Wolf_Run_6: 6610073224738977486
-      Wolf_Run_7: 2748373915800755324
+      Wolf_Charge_0: -3869154128010972106
+      Wolf_Charge_1: 117810216576464776
+      Wolf_Charge_2: 1418511821295538004
+      Wolf_Charge_3: 2912878124514221381
+      Wolf_Charge_4: -2081531008123160452
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -1,7 +1,16 @@
 fileFormatVersion: 2
 guid: d2b01d7a2aac5d049a2d72e94fe11e62
 TextureImporter:
-  internalIDToNameTable: []
+  internalIDToNameTable:
+  - first:
+      213: 5440247199187940246
+    second: Wolf_Hit_4
+  - first:
+      213: 4608530813267095006
+    second: Wolf_Hit_5
+  - first:
+      213: -8045233758984961021
+    second: Wolf_Hit_6
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -48,7 +57,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 76
+  spritePixelsToUnits: 72
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -115,10 +124,10 @@ TextureImporter:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 800
-        height: 440
+        width: 600
+        height: 392
       alignment: 9
-      pivot: {x: 0.5, y: 0.027272727}
+      pivot: {x: 0.5, y: 0.08163265}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -135,12 +144,12 @@ TextureImporter:
       name: Wolf_Hit_1
       rect:
         serializedVersion: 2
-        x: 800
+        x: 600
         y: 0
-        width: 800
-        height: 440
+        width: 600
+        height: 392
       alignment: 9
-      pivot: {x: 0.5, y: 0.027272727}
+      pivot: {x: 0.5, y: 0.08163265}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -157,12 +166,12 @@ TextureImporter:
       name: Wolf_Hit_2
       rect:
         serializedVersion: 2
-        x: 1600
+        x: 1200
         y: 0
-        width: 800
-        height: 440
+        width: 600
+        height: 392
       alignment: 9
-      pivot: {x: 0.5, y: 0.027272727}
+      pivot: {x: 0.5, y: 0.08163265}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -179,12 +188,12 @@ TextureImporter:
       name: Wolf_Hit_3
       rect:
         serializedVersion: 2
-        x: 2400
+        x: 1800
         y: 0
-        width: 800
-        height: 440
+        width: 600
+        height: 392
       alignment: 9
-      pivot: {x: 0.5, y: 0.027272727}
+      pivot: {x: 0.5, y: 0.08163265}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -193,6 +202,72 @@ TextureImporter:
       bones: []
       spriteID: 7b792910eaa8c4230800000000000000
       internalID: 3624424280081733559
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Wolf_Hit_4
+      rect:
+        serializedVersion: 2
+        x: 2400
+        y: 0
+        width: 600
+        height: 392
+      alignment: 9
+      pivot: {x: 0.5, y: 0.08163265}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 69339e50104af7b40800000000000000
+      internalID: 5440247199187940246
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Wolf_Hit_5
+      rect:
+        serializedVersion: 2
+        x: 3000
+        y: 0
+        width: 600
+        height: 392
+      alignment: 9
+      pivot: {x: 0.5, y: 0.08163265}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: edd2a3d8b5ac4ff30800000000000000
+      internalID: 4608530813267095006
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Wolf_Hit_6
+      rect:
+        serializedVersion: 2
+        x: 3600
+        y: 0
+        width: 600
+        height: 392
+      alignment: 9
+      pivot: {x: 0.5, y: 0.08163265}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 30488bc8586995090800000000000000
+      internalID: -8045233758984961021
       vertices: []
       indices: 
       edges: []
@@ -215,6 +290,9 @@ TextureImporter:
       Wolf_Hit_1: 7127683468207119298
       Wolf_Hit_2: 955418746885968355
       Wolf_Hit_3: 3624424280081733559
+      Wolf_Hit_4: 5440247199187940246
+      Wolf_Hit_5: 4608530813267095006
+      Wolf_Hit_6: -8045233758984961021
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

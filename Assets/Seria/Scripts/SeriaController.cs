@@ -244,7 +244,7 @@ public class SeriaController : MonoBehaviour
         bool grounded = IsGrounded();
         bool busy = Busy();
 
-        if (grounded) airDashUsed = false;
+        if (grounded) { airDashUsed = false; airJumpsUsed = 0; }   // 땅에 닿으면 2단 점프·공중 대쉬 다시 가능 (대쉬 중 착지 포함)
 
         // ── 대쉬 중 ──
         if (dashing)

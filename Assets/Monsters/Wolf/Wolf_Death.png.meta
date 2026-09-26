@@ -1,7 +1,22 @@
 fileFormatVersion: 2
 guid: 362e75cabe1f2994f8b6798e8a056bed
 TextureImporter:
-  internalIDToNameTable: []
+  internalIDToNameTable:
+  - first:
+      213: -1182637391024626292
+    second: Wolf_Death_6
+  - first:
+      213: 305079987511601912
+    second: Wolf_Death_7
+  - first:
+      213: -4443585077955984790
+    second: Wolf_Death_8
+  - first:
+      213: -728722724761624655
+    second: Wolf_Death_9
+  - first:
+      213: -8588708939474617262
+    second: Wolf_Death_10
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -48,7 +63,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 76
+  spritePixelsToUnits: 72
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -115,10 +130,10 @@ TextureImporter:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 800
-        height: 440
+        width: 728
+        height: 356
       alignment: 9
-      pivot: {x: 0.5, y: 0.027272727}
+      pivot: {x: 0.5, y: 0.08988764}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -135,12 +150,12 @@ TextureImporter:
       name: Wolf_Death_1
       rect:
         serializedVersion: 2
-        x: 800
+        x: 728
         y: 0
-        width: 800
-        height: 440
+        width: 728
+        height: 356
       alignment: 9
-      pivot: {x: 0.5, y: 0.027272727}
+      pivot: {x: 0.5, y: 0.08988764}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -157,12 +172,12 @@ TextureImporter:
       name: Wolf_Death_2
       rect:
         serializedVersion: 2
-        x: 1600
+        x: 1456
         y: 0
-        width: 800
-        height: 440
+        width: 728
+        height: 356
       alignment: 9
-      pivot: {x: 0.5, y: 0.027272727}
+      pivot: {x: 0.5, y: 0.08988764}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -179,12 +194,12 @@ TextureImporter:
       name: Wolf_Death_3
       rect:
         serializedVersion: 2
-        x: 2400
+        x: 2184
         y: 0
-        width: 800
-        height: 440
+        width: 728
+        height: 356
       alignment: 9
-      pivot: {x: 0.5, y: 0.027272727}
+      pivot: {x: 0.5, y: 0.08988764}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -201,12 +216,12 @@ TextureImporter:
       name: Wolf_Death_4
       rect:
         serializedVersion: 2
-        x: 3200
+        x: 2912
         y: 0
-        width: 800
-        height: 440
+        width: 728
+        height: 356
       alignment: 9
-      pivot: {x: 0.5, y: 0.027272727}
+      pivot: {x: 0.5, y: 0.08988764}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -223,12 +238,12 @@ TextureImporter:
       name: Wolf_Death_5
       rect:
         serializedVersion: 2
-        x: 4000
+        x: 3640
         y: 0
-        width: 800
-        height: 440
+        width: 728
+        height: 356
       alignment: 9
-      pivot: {x: 0.5, y: 0.027272727}
+      pivot: {x: 0.5, y: 0.08988764}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -237,6 +252,116 @@ TextureImporter:
       bones: []
       spriteID: a9d2f8e2357b956c0800000000000000
       internalID: -4154087613381268070
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Wolf_Death_6
+      rect:
+        serializedVersion: 2
+        x: 4368
+        y: 0
+        width: 728
+        height: 356
+      alignment: 9
+      pivot: {x: 0.5, y: 0.08988764}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c85e1e90f8d669fe0800000000000000
+      internalID: -1182637391024626292
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Wolf_Death_7
+      rect:
+        serializedVersion: 2
+        x: 5096
+        y: 0
+        width: 728
+        height: 356
+      alignment: 9
+      pivot: {x: 0.5, y: 0.08988764}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8faa5bbd1acdb3400800000000000000
+      internalID: 305079987511601912
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Wolf_Death_8
+      rect:
+        serializedVersion: 2
+        x: 5824
+        y: 0
+        width: 728
+        height: 356
+      alignment: 9
+      pivot: {x: 0.5, y: 0.08988764}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a62053b2ae63552c0800000000000000
+      internalID: -4443585077955984790
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Wolf_Death_9
+      rect:
+        serializedVersion: 2
+        x: 6552
+        y: 0
+        width: 728
+        height: 356
+      alignment: 9
+      pivot: {x: 0.5, y: 0.08988764}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1bf14d2fa8e03e5f0800000000000000
+      internalID: -728722724761624655
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Wolf_Death_10
+      rect:
+        serializedVersion: 2
+        x: 7280
+        y: 0
+        width: 728
+        height: 356
+      alignment: 9
+      pivot: {x: 0.5, y: 0.08988764}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 25cb46779b6cec880800000000000000
+      internalID: -8588708939474617262
       vertices: []
       indices: 
       edges: []
@@ -257,10 +382,15 @@ TextureImporter:
     nameFileIdTable:
       Wolf_Death_0: 1795896495140380725
       Wolf_Death_1: 147215735005858661
+      Wolf_Death_10: -8588708939474617262
       Wolf_Death_2: 7569384808509767424
       Wolf_Death_3: 422253550836710983
       Wolf_Death_4: -2628574547910810060
       Wolf_Death_5: -4154087613381268070
+      Wolf_Death_6: -1182637391024626292
+      Wolf_Death_7: 305079987511601912
+      Wolf_Death_8: -4443585077955984790
+      Wolf_Death_9: -728722724761624655
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

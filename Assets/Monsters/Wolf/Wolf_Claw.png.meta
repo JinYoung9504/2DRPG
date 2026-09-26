@@ -1,7 +1,19 @@
 fileFormatVersion: 2
 guid: 0018542399857594989c3a23c8f38394
 TextureImporter:
-  internalIDToNameTable: []
+  internalIDToNameTable:
+  - first:
+      213: -2893709622150194738
+    second: Wolf_Claw_8
+  - first:
+      213: -1810672379165890239
+    second: Wolf_Claw_9
+  - first:
+      213: 7814882948493328144
+    second: Wolf_Claw_10
+  - first:
+      213: 1413324481039564815
+    second: Wolf_Claw_11
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -48,7 +60,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 76
+  spritePixelsToUnits: 72
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -115,10 +127,10 @@ TextureImporter:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 800
-        height: 440
+        width: 432
+        height: 396
       alignment: 9
-      pivot: {x: 0.5, y: 0.027272727}
+      pivot: {x: 0.5, y: 0.08080808}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -135,12 +147,12 @@ TextureImporter:
       name: Wolf_Claw_1
       rect:
         serializedVersion: 2
-        x: 800
+        x: 432
         y: 0
-        width: 800
-        height: 440
+        width: 432
+        height: 396
       alignment: 9
-      pivot: {x: 0.5, y: 0.027272727}
+      pivot: {x: 0.5, y: 0.08080808}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -157,12 +169,12 @@ TextureImporter:
       name: Wolf_Claw_2
       rect:
         serializedVersion: 2
-        x: 1600
+        x: 864
         y: 0
-        width: 800
-        height: 440
+        width: 432
+        height: 396
       alignment: 9
-      pivot: {x: 0.5, y: 0.027272727}
+      pivot: {x: 0.5, y: 0.08080808}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -179,12 +191,12 @@ TextureImporter:
       name: Wolf_Claw_3
       rect:
         serializedVersion: 2
-        x: 2400
+        x: 1296
         y: 0
-        width: 800
-        height: 440
+        width: 432
+        height: 396
       alignment: 9
-      pivot: {x: 0.5, y: 0.027272727}
+      pivot: {x: 0.5, y: 0.08080808}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -201,12 +213,12 @@ TextureImporter:
       name: Wolf_Claw_4
       rect:
         serializedVersion: 2
-        x: 3200
+        x: 1728
         y: 0
-        width: 800
-        height: 440
+        width: 432
+        height: 396
       alignment: 9
-      pivot: {x: 0.5, y: 0.027272727}
+      pivot: {x: 0.5, y: 0.08080808}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -223,12 +235,12 @@ TextureImporter:
       name: Wolf_Claw_5
       rect:
         serializedVersion: 2
-        x: 4000
+        x: 2160
         y: 0
-        width: 800
-        height: 440
+        width: 432
+        height: 396
       alignment: 9
-      pivot: {x: 0.5, y: 0.027272727}
+      pivot: {x: 0.5, y: 0.08080808}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -245,12 +257,12 @@ TextureImporter:
       name: Wolf_Claw_6
       rect:
         serializedVersion: 2
-        x: 4800
+        x: 2592
         y: 0
-        width: 800
-        height: 440
+        width: 432
+        height: 396
       alignment: 9
-      pivot: {x: 0.5, y: 0.027272727}
+      pivot: {x: 0.5, y: 0.08080808}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -267,12 +279,12 @@ TextureImporter:
       name: Wolf_Claw_7
       rect:
         serializedVersion: 2
-        x: 5600
+        x: 3024
         y: 0
-        width: 800
-        height: 440
+        width: 432
+        height: 396
       alignment: 9
-      pivot: {x: 0.5, y: 0.027272727}
+      pivot: {x: 0.5, y: 0.08080808}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -281,6 +293,94 @@ TextureImporter:
       bones: []
       spriteID: cddda98434d38b870800000000000000
       internalID: 8698770039456325084
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Wolf_Claw_8
+      rect:
+        serializedVersion: 2
+        x: 3456
+        y: 0
+        width: 432
+        height: 396
+      alignment: 9
+      pivot: {x: 0.5, y: 0.08080808}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ec99b902e6a77d7d0800000000000000
+      internalID: -2893709622150194738
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Wolf_Claw_9
+      rect:
+        serializedVersion: 2
+        x: 3888
+        y: 0
+        width: 432
+        height: 396
+      alignment: 9
+      pivot: {x: 0.5, y: 0.08080808}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 149a43380133fd6e0800000000000000
+      internalID: -1810672379165890239
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Wolf_Claw_10
+      rect:
+        serializedVersion: 2
+        x: 4320
+        y: 0
+        width: 432
+        height: 396
+      alignment: 9
+      pivot: {x: 0.5, y: 0.08080808}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 01fb33af2aa047c60800000000000000
+      internalID: 7814882948493328144
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Wolf_Claw_11
+      rect:
+        serializedVersion: 2
+        x: 4752
+        y: 0
+        width: 432
+        height: 396
+      alignment: 9
+      pivot: {x: 0.5, y: 0.08080808}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f000abc90232d9310800000000000000
+      internalID: 1413324481039564815
       vertices: []
       indices: 
       edges: []
@@ -301,12 +401,16 @@ TextureImporter:
     nameFileIdTable:
       Wolf_Claw_0: 6091433940661573412
       Wolf_Claw_1: -5862218926746338588
+      Wolf_Claw_10: 7814882948493328144
+      Wolf_Claw_11: 1413324481039564815
       Wolf_Claw_2: 6018539866091769298
       Wolf_Claw_3: -5482010481395989799
       Wolf_Claw_4: 3669522075605395147
       Wolf_Claw_5: 7784752707583387388
       Wolf_Claw_6: 2606302732370318346
       Wolf_Claw_7: 8698770039456325084
+      Wolf_Claw_8: -2893709622150194738
+      Wolf_Claw_9: -1810672379165890239
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
