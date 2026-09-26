@@ -69,6 +69,7 @@
     <Compile Include="Assets\Title\Scripts\Toast.cs" />
     <Compile Include="Assets\Skills\Scripts\PlayerLevel.cs" />
     <Compile Include="Assets\Monsters\Scripts\WolfBoss.cs" />
+    <Compile Include="Assets\Maps\Scripts\ParallaxBand.cs" />
     <Compile Include="Assets\Skills\Scripts\SeriaSkills.cs" />
     <Compile Include="Assets\NPC\Scripts\DialogueData.cs" />
     <Compile Include="Assets\Settings\Scripts\BGMPlayer.cs" />
