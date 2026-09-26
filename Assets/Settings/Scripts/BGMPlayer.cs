@@ -1,4 +1,5 @@
-// 배경음악: 맵의 배경에 따라 자동으로 곡을 골라 반복 재생
+// 배경음악: 화면(맵)에 따라 자동으로 곡을 골라 반복 재생
+//  타이틀 화면(Title Screen)      → BGM_Title
 //  시작 마을(Town Background)  → BGM_Town   (Hearthfire and Cobblestone)
 //  정령의 숲(Forest Background) → BGM_Forest (Beyond the Sacred Canopy)
 //  같은 지역 안에서 맵을 이동하면 끊기지 않고 이어지고, 지역이 바뀌면 부드럽게 교체
@@ -50,8 +51,28 @@ public class BGMPlayer : MonoBehaviour
         src.loop = true; src.playOnAwake = false; src.volume = 0f;
     }
 
+    // 소리를 들으려면 씬에 Audio Listener 가 하나 있어야 함 (타이틀 화면 카메라엔 없었음)
+    AudioListener ownListener;
+    void EnsureListener()
+    {
+        int others = 0;
+#if UNITY_2023_1_OR_NEWER
+        foreach (var l in Object.FindObjectsByType<AudioListener>(FindObjectsSortMode.None))
+#else
+        foreach (var l in Object.FindObjectsOfType<AudioListener>())
+#endif
+            if (l != ownListener && l.enabled) others++;
+        if (others == 0)
+        {
+            if (ownListener == null) ownListener = gameObject.AddComponent<AudioListener>();
+            ownListener.enabled = true;
+        }
+        else if (ownListener != null) ownListener.enabled = false;   // 씬에 이미 있으면 중복 방지
+    }
+
     void Refresh()
     {
+        EnsureListener();
         AudioClip want = null;
         foreach (var a in Areas)
             if (GameObject.Find(a.background) != null)

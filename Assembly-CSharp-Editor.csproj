@@ -53,6 +53,7 @@
     <Compile Include="Assets\Monsters\Editor\WolfTools.cs" />
     <Compile Include="Assets\Monsters\Editor\MushroomTools.cs" />
     <Compile Include="Assets\Monsters\Editor\BoarTools.cs" />
+    <Compile Include="Assets\Monsters\Editor\TreeBossTools.cs" />
     <Compile Include="Assets\Monsters\Editor\GolemTools.cs" />
     <Compile Include="Assets\Maps\Editor\MapBuilder.cs" />
     <Compile Include="Assets\Seria\Editor\TouchControlsBuilder.cs" />
