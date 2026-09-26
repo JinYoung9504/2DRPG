@@ -29,13 +29,21 @@ public class SeriaController : MonoBehaviour
     public KeyCode jumpKey2 = KeyCode.RightAlt;
     public KeyCode attackKey = KeyCode.LeftControl;
     public KeyCode attackKey2 = KeyCode.RightControl;
-    public KeyCode heavyKey = KeyCode.Space;
+    public KeyCode heavyKey = KeyCode.None;    // 강공격은 기본 공격 3타로 나감 (Space 는 섬광보)
+    public KeyCode blinkKey = KeyCode.Space;   // 섬광보 (순간이동)
     public KeyCode skillKey = KeyCode.LeftShift;
     public KeyCode hitTestKey = KeyCode.H;
     public KeyCode dieTestKey = KeyCode.K;
     public KeyCode crouchKey = KeyCode.DownArrow;
     public KeyCode guardKey = KeyCode.X;
     public KeyCode reviveTestKey = KeyCode.R;
+
+    [Header("섬광보 (Space)")]
+    public float blinkDistance = 3f;       // 바라보는 방향으로 이만큼 앞에 나타남 (몬스터 무시)
+    public float blinkCooldown = 1f;
+    public float blinkInvincible = 0.2f;   // 순간이동 직후 짧은 무적
+    float blinkReadyTime; StageBounds blinkStage;
+    public float BlinkCooldownRemaining => Mathf.Max(0f, blinkReadyTime - Time.time);
 
     [Header("이동")]
     public float moveSpeed = 4f;          // 초당 이동 거리
@@ -115,6 +123,7 @@ public class SeriaController : MonoBehaviour
         col = GetComponent<Collider2D>();
         // 예전 설정(X = 사망 테스트)이 남아 있으면 방어 키와 겹치지 않게 변경
         if (dieTestKey == guardKey) dieTestKey = KeyCode.K;
+        if (heavyKey == blinkKey) heavyKey = KeyCode.None;          // 예전 설정(Space = 강공격)이 남아 있으면 섬광보로 넘김
         capsule = col as CapsuleCollider2D;
         if (capsule != null) { standSize = capsule.size; standOffset = capsule.offset; }
 
@@ -246,6 +255,9 @@ public class SeriaController : MonoBehaviour
         bool busy = Busy();
 
         if (grounded) { airDashUsed = false; airJumpsUsed = 0; }   // 땅에 닿으면 2단 점프·공중 대쉬 다시 가능 (대쉬 중 착지 포함)
+
+        // ── 섬광보 (Space): 어떤 동작 중이든 바로 순간이동 ──
+        if (Pressed(blinkKey) && Time.time >= blinkReadyTime) { Blink(); return; }
 
         // ── 대쉬 중 ──
         if (dashing)
@@ -418,7 +430,7 @@ public class SeriaController : MonoBehaviour
             shieldFx = LoadSheet("SeriaFX/FX_Shield");
         }
         bool guardHeld = Held(guardKey), crouchHeld = Held(crouchKey);
-        if (pose != Pose.None && (Pressed(attackKey, attackKey2) || Pressed(heavyKey) || Pressed(skillKey) || Pressed(jumpKey, jumpKey2)))
+        if (pose != Pose.None && (Pressed(attackKey, attackKey2) || Pressed(heavyKey) || Pressed(blinkKey) || Pressed(skillKey) || Pressed(jumpKey, jumpKey2)))
         { EndPose(); return false; }                                  // 자세를 끊고 이번 프레임에 바로 행동
 
         if (pose == Pose.None)
@@ -639,6 +651,33 @@ public class SeriaController : MonoBehaviour
         nextDashTime = Time.time + dashCooldown;
         anim.speed = 1f;
         Vel = new Vector2(dashDir * moveSpeed, Vel.y);   // 부드럽게 감속 (점프 중이면 높이 유지)
+    }
+
+    // ── 섬광보: 바라보는 방향으로 blinkDistance 만큼 앞에 나타남 (몬스터는 통과, 맵 끝은 넘지 않음) ──
+    void Blink()
+    {
+        blinkReadyTime = Time.time + blinkCooldown;
+        if (dashing) EndDash();
+        CancelAttack(); EndPose();
+        float dir = sr.flipX ? -1f : 1f;
+        Vector2 from = rb.position;
+        float tx = from.x + dir * blinkDistance;
+        if (blinkStage == null)
+        {
+#if UNITY_2023_1_OR_NEWER
+            blinkStage = FindFirstObjectByType<StageBounds>();
+#else
+            blinkStage = FindObjectOfType<StageBounds>();
+#endif
+        }
+        if (blinkStage != null) tx = Mathf.Clamp(tx, blinkStage.left + 0.4f, blinkStage.right - 0.4f);
+        Vector2 to = new Vector2(tx, from.y);
+        SpawnAfterImage();
+        rb.position = to; transform.position = to;
+        Vel = new Vector2(dir * moveSpeed * 0.5f, Mathf.Max(0f, Vel.y));
+        if (health != null) health.GrantInvincible(blinkInvincible);
+        BlinkFX.Play(from, to, dir, sr.sortingOrder);
+        anim.speed = 1f;
     }
 
     // 잔상: 현재 모습을 복사해 색을 입히고 서서히 사라지게

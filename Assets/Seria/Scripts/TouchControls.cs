@@ -63,7 +63,7 @@ public class TouchControls : MonoBehaviour
         // 우측 중간: 공격 / 강공격 / 스킬 / 점프
         Btn(cgo.transform, "Attack", attack, player.attackKey, R, new Vector2(-210, -60), 210);
         Btn(cgo.transform, "Jump", jump, player.jumpKey, R, new Vector2(-440, -140), 150);
-        Btn(cgo.transform, "Heavy", heavy, player.heavyKey, R, new Vector2(-430, 90), 150);
+        Btn(cgo.transform, "Blink", heavy, player.blinkKey, R, new Vector2(-430, 90), 150);   // 섬광보 (강공격은 공격 3타)
         var sk = Btn(cgo.transform, "Skill", skill, player.skillKey, R, new Vector2(-210, 190), 150);
 
         // 숙이기 (이동 버튼 아래) / 방어 (공격 버튼 왼쪽)

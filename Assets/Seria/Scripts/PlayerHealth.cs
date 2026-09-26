@@ -39,6 +39,9 @@ public class PlayerHealth : MonoBehaviour
     }
 
     // 최대 체력 변경 (레벨업 등). fill = true 면 체력을 가득 채움
+    // 잠깐 무적 (섬광보 등)
+    public void GrantInvincible(float seconds) { invincibleUntil = Mathf.Max(invincibleUntil, Time.time + seconds); }
+
     public void SetMaxHP(float newMax, bool fill)
     {
         maxHP = Mathf.Max(1f, newMax);

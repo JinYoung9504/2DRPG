@@ -742,12 +742,16 @@ MonoBehaviour:
   attackKey: 306
   attackKey2: 305
   heavyKey: 32
+  blinkKey: 32
   skillKey: 304
   hitTestKey: 104
   dieTestKey: 120
   crouchKey: 274
   guardKey: 120
   reviveTestKey: 114
+  blinkDistance: 5
+  blinkCooldown: 1
+  blinkInvincible: 0.5
   moveSpeed: 4
   acceleration: 40
   deceleration: 45
@@ -1379,6 +1383,9 @@ MonoBehaviour:
   talkRange: 1.3
   spriteFacesLeft: 0
   iconOffset: {x: 0, y: 1.75}
+  floatHeight: 0
+  bobAmplitude: 0
+  bobSpeed: 2
 --- !u!212 &2145573422
 SpriteRenderer:
   serializedVersion: 2
