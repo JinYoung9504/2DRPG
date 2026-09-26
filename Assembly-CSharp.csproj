@@ -53,6 +53,7 @@
     <Compile Include="Assets\Title\Scripts\SaveSystem.cs" />
     <Compile Include="Assets\Settings\Scripts\GameOverScreen.cs" />
     <Compile Include="Assets\Title\Scripts\UIButtonFx.cs" />
+    <Compile Include="Assets\Monsters\Scripts\VampireBoss.cs" />
     <Compile Include="Assets\Skills\Scripts\SkillEffects.cs" />
     <Compile Include="Assets\Maps\Scripts\SceneTransition.cs" />
     <Compile Include="Assets\Monsters\Scripts\BoarEnemy.cs" />

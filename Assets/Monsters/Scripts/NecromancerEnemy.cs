@@ -27,6 +27,8 @@ public class NecromancerEnemy : MonoBehaviour
     public float summonCooldown = 12f;     // 소환수가 모두 쓰러진 뒤 다시 소환까지
     public float castFps = 10f;            // 소환 동작 7장
     public int spawnFrame = 5;             // 몇 번째 장면에서 소환수가 나타나는지
+    [Tooltip("끄면 소환한 스켈레톤이 경험치를 주지 않음 (뱀파이어 보스가 소환한 네크로맨서 등)")]
+    public bool summonsGiveExp = true;
 
     [Header("근접 공격")]
     public float meleeRange = 1.8f;
@@ -180,8 +182,20 @@ public class NecromancerEnemy : MonoBehaviour
         g.name = prefab.name + " (소환)";
         var eh = g.GetComponent<EnemyHealth>();
         if (eh != null) { eh.respawnTime = 0f; summons.Add(eh); }          // 소환수는 다시 살아나지 않음
+        if (!summonsGiveExp)
+        {
+            var sk = g.GetComponent<SkeletonEnemy>(); if (sk != null) sk.expReward = 0;
+            var ar = g.GetComponent<SkeletonArcherEnemy>(); if (ar != null) ar.expReward = 0;
+        }
         var gsr = g.GetComponent<SpriteRenderer>();
         if (gsr != null) { gsr.flipX = dir < 0; StartCoroutine(FadeIn(gsr)); }
+    }
+
+    // 소환한 스켈레톤을 모두 무너뜨림 (주인 보스가 쓰러졌을 때 등)
+    public void KillAllSummons()
+    {
+        foreach (var s in summons) if (s != null && !s.IsDead) s.TakeDamage(99999f, transform.position.x);
+        summons.Clear();
     }
 
     IEnumerator FadeIn(SpriteRenderer s)

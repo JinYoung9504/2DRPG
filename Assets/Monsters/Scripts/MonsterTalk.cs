@@ -68,7 +68,7 @@ public class MonsterTalk : MonoBehaviour
         for (int i = 0; i < lines.Length; i++)
         {
             bool seria = lines[i].speaker == Speaker.Seria;
-            list[i] = new DialogueUI.Entry { name = seria ? "세리아" : data.monsterName, face = seria ? seriaFace : face, right = !seria, text = lines[i].text };
+            list[i] = new DialogueUI.Entry { name = seria ? "세리아" : data.monsterName, face = lines[i].face != null ? lines[i].face : (seria ? seriaFace : face), right = !seria, text = lines[i].text };
         }
         DialogueUI.Show(list);
     }

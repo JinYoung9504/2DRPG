@@ -84,7 +84,7 @@ public static class NecromancerTools
         return clip;
     }
 
-    static AnimatorController GetController()
+    public static AnimatorController GetController()
     {
         string path = Dir + "Necromancer.controller";
         var old = AssetDatabase.LoadAssetAtPath<AnimatorController>(path);
@@ -115,7 +115,7 @@ public static class NecromancerTools
         return prefab;
     }
 
-    static void GetSummons(out GameObject sword, out GameObject archer)
+    public static void GetSummons(out GameObject sword, out GameObject archer)
     {
         sword = SummonPrefab("Summon_SkeletonSoldier", () =>
         {
