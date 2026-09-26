@@ -71,6 +71,7 @@
     <Compile Include="Assets\Skills\Scripts\PlayerLevel.cs" />
     <Compile Include="Assets\Monsters\Scripts\WolfBoss.cs" />
     <Compile Include="Assets\Maps\Scripts\ParallaxBand.cs" />
+    <Compile Include="Assets\Story\Scripts\PrologueData.cs" />
     <Compile Include="Assets\Skills\Scripts\SeriaSkills.cs" />
     <Compile Include="Assets\NPC\Scripts\DialogueData.cs" />
     <Compile Include="Assets\Settings\Scripts\BGMPlayer.cs" />
@@ -89,6 +90,7 @@
     <Compile Include="Assets\Seria\Scripts\SeriaHUD.cs" />
     <Compile Include="Assets\Seria\Scripts\TouchButton.cs" />
     <Compile Include="Assets\Backgrounds\Scripts\ParallaxFit.cs" />
+    <Compile Include="Assets\Story\Scripts\PrologueScreen.cs" />
     <Compile Include="Assets\Seria\Scripts\TouchControls.cs" />
     <Compile Include="Assets\Monsters\Scripts\TreeBossEnemy.cs" />
     <Compile Include="Assets\Monsters\Scripts\NecromancerEnemy.cs" />

@@ -1,5 +1,5 @@
 // 타이틀 화면: 그림을 화면에 꽉 채우고, 그림 속 버튼 위치에 투명 버튼을 겹쳐 놓음
-//  시작하기 → 첫 번째 맵으로 / 이어하기 → 마지막 저장 위치에서 계속
+//  시작하기 → 검은 화면 오프닝 대사 → 첫 번째 맵으로 / 이어하기 → 마지막 저장 위치에서 계속
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
@@ -92,7 +92,8 @@ public class TitleScreen : MonoBehaviour
         PlayerHealth.CarryHP = -1f;                 // 새 게임: 체력 가득
         PlayerLevel.CarryLevel = 1; PlayerLevel.CarryExp = 0;   // 새 게임: 1레벨
         GameProgress.Reset(); MonsterTalk.ResetShown();
-        SceneTransition.Go(firstScene, null);
+        // 검은 화면 오프닝 대사 → 끝나면 첫 맵으로
+        PrologueScreen.Play(() => SceneTransition.Go(firstScene, null));
     }
 
     void OnContinue()

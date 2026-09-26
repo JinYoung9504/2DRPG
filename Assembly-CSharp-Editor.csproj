@@ -73,6 +73,7 @@
     <Compile Include="Assets\Monsters\Editor\AtakhanTools.cs" />
     <Compile Include="Assets\Maps\Editor\Map3Builder.cs" />
     <Compile Include="Assets\Monsters\Editor\BalanceTools.cs" />
+    <Compile Include="Assets\Story\Editor\PrologueTools.cs" />
     <Compile Include="Assets\Monsters\Editor\EntTools.cs" />
     <Compile Include="Assets\Monsters\Editor\NecromancerTools.cs" />
     <Compile Include="Assets\Monsters\Editor\SkeletonArcherTools.cs" />
