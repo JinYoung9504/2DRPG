@@ -2,6 +2,7 @@
 //  타이틀 화면(Title Screen)      → BGM_Title
 //  시작 마을(Town Background)  → BGM_Town   (Hearthfire and Cobblestone)
 //  정령의 숲(Forest Background) → BGM_Forest (Beyond the Sacred Canopy)
+//  멸망한 왕국 성곽(Castle Background) → BGM_Castle (Crown of Fallen Stone)
 //  같은 지역 안에서 맵을 이동하면 끊기지 않고 이어지고, 지역이 바뀌면 부드럽게 교체
 //  볼륨은 PlayerPrefs 에 저장 (게임을 껐다 켜도 유지)
 using System.Collections;
@@ -18,6 +19,7 @@ public class BGMPlayer : MonoBehaviour
     static readonly (string background, string clip)[] Areas =
     {
         ("Title Screen", "BGM_Title"),          // 타이틀 화면 (시작하기 / 이어하기)
+        ("Castle Background", "BGM_Castle"),   // 멸망한 왕국 성곽 (숲 맵을 복사해 만들어서 숲보다 먼저 확인)
         ("Town Background", "BGM_Town"),
         ("Forest Background", "BGM_Forest"),
     };

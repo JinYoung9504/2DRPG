@@ -51,6 +51,7 @@
   <ItemGroup>
     <Compile Include="Assets\Monsters\Editor\MonsterTalkTools.cs" />
     <Compile Include="Assets\Monsters\Editor\WolfTools.cs" />
+    <Compile Include="Assets\Maps\Editor\CastleMapBuilder.cs" />
     <Compile Include="Assets\Monsters\Editor\MushroomTools.cs" />
     <Compile Include="Assets\Monsters\Editor\BoarTools.cs" />
     <Compile Include="Assets\Monsters\Editor\TreeBossTools.cs" />
