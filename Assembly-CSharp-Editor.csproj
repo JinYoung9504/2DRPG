@@ -55,6 +55,7 @@
     <Compile Include="Assets\Monsters\Editor\MushroomTools.cs" />
     <Compile Include="Assets\Monsters\Editor\VampireTools.cs" />
     <Compile Include="Assets\Monsters\Editor\BoarTools.cs" />
+    <Compile Include="Assets\Build\Editor\DemoBuilder.cs" />
     <Compile Include="Assets\Monsters\Editor\TreeBossTools.cs" />
     <Compile Include="Assets\Monsters\Editor\GolemTools.cs" />
     <Compile Include="Assets\Maps\Editor\MapBuilder.cs" />
@@ -65,6 +66,7 @@
     <Compile Include="Assets\Title\Editor\TitleSetup.cs" />
     <Compile Include="Assets\Backgrounds\Editor\BackgroundImporter.cs" />
     <Compile Include="Assets\Monsters\Editor\SkeletonTools.cs" />
+    <Compile Include="Assets\Title\Editor\TitleExtraImporter.cs" />
     <Compile Include="Assets\NPC\Editor\NpcTools.cs" />
     <Compile Include="Assets\Maps\Editor\BossMapBuilder.cs" />
     <Compile Include="Assets\Maps\Editor\ThroneMapBuilder.cs" />

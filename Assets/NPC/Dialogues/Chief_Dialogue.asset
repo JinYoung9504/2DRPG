@@ -17,19 +17,27 @@ MonoBehaviour:
   lines:
   - speaker: 0
     text: "\uC790\uB124\uB294 \uCC98\uC74C \uBCF4\uB294 \uAE30\uC0AC\uC778\uB370?"
+    face: {fileID: 0}
   - speaker: 1
     text: "\uC548\uB155\uD558\uC138\uC694. \uC138\uB9AC\uC544\uB77C\uACE0 \uD569\uB2C8\uB2E4."
+    face: {fileID: 0}
   - speaker: 0
     text: "\uD639\uC2DC \uC6B0\uB9AC \uB9C8\uC744 \uC880 \uB3C4\uC640 \uC904 \uC218
       \uC788\uC744\uAE4C?"
+    face: {fileID: 0}
   - speaker: 1
     text: "\uADF8\uB7FC\uC694! \uB3C4\uC640\uB4DC\uB9B4\uAED8\uC694."
+    face: {fileID: 0}
   - speaker: 0
     text: "\uACE0\uB9D9\uAD6C\uB098 "
+    face: {fileID: 0}
   - speaker: 0
     text: "\uC624\uB978\uCABD\uC73C\uB85C \uAC00\uB2E4 \uBCF4\uBA74 \uBAAC\uC2A4\uD130\uB4E4\uC774
       \uB0A0\uB6F0\uC5B4\uC11C \uB9C8\uC744\uC774 \uD798\uB4E4\uAD6C\uB098. "
+    face: {fileID: 0}
   - speaker: 0
     text: "\uBAAC\uC2A4\uD130\uB4E4\uC744 \uCC98\uCE58 \uD574 \uC904 \uC218 \uC788\uB098? "
+    face: {fileID: 0}
   - speaker: 1
     text: "\uB124 \uAE30\uC0AC\uC758 \uBA85\uC608\uB97C \uAC78\uACE0 \uCC98\uCE58\uD558\uACA0\uC2B5\uB2C8\uB2E4! "
+    face: {fileID: 0}

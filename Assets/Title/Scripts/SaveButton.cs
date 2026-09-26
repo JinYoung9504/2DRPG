@@ -1,6 +1,7 @@
 // 인게임 우측 상단 설정(톱니바퀴) 메뉴
 //  톱니바퀴를 누르면 아래로 펼쳐짐 (게임 일시정지):  저장(플로피) / 소리(스피커, 볼륨 조절) / 시작 화면(집)
 //  ESC 키로도 열고 닫을 수 있음
+//  타이틀 화면(titleMode)에서는 소리 조절만 표시
 //  ※ 이전 '저장 버튼' 스크립트를 대체합니다 (클래스 이름 유지 → 기존 맵에 자동 적용)
 using System.Collections;
 using UnityEngine;
@@ -15,6 +16,7 @@ public class SaveButton : MonoBehaviour
     public Sprite toastSaved;
     public float size = 64f;
     public string titleScene = "Title";
+    [Tooltip("타이틀 화면용: 소리 조절만 표시, 게임 일시정지 안 함")] public bool titleMode;
 
     Sprite gearIcon, soundIcon, muteIcon, homeIcon, toastHome;
     RectTransform gearBtn, panel, volumePopup, saveBtn, soundBtn;
@@ -35,7 +37,7 @@ public class SaveButton : MonoBehaviour
         SetOpen(false);
     }
 
-    void OnDestroy() { if (IsOpen) { Time.timeScale = 1f; IsOpen = false; } }
+    void OnDestroy() { if (IsOpen) { if (!titleMode) Time.timeScale = 1f; IsOpen = false; } }
 
     // ── UI 만들기 ──
     RectTransform Rt(string name, Transform parent, Vector2 anchor, Vector2 pos, Vector2 sz)
@@ -86,14 +88,16 @@ public class SaveButton : MonoBehaviour
         gearBtn = IconButton("Btn Settings", cgo.transform, new Vector2(-24, -24), gearIcon, () => SetOpen(!open), out _);
 
         // 펼쳐지는 패널
-        panel = Rt("Panel", cgo.transform, new Vector2(1, 1), new Vector2(-16, -24 - step + 8), new Vector2(size + 16, step * 3 + 8));
+        int rows = titleMode ? 1 : 3;
+        float soundY = titleMode ? -8 : -8 - step;
+        panel = Rt("Panel", cgo.transform, new Vector2(1, 1), new Vector2(-16, -24 - step + 8), new Vector2(size + 16, step * rows + 8));
         var pimg = panel.gameObject.AddComponent<Image>(); pimg.color = new Color(0.08f, 0.06f, 0.1f, 0.75f);
-        saveBtn = IconButton("Btn Save", panel, new Vector2(-8, -8), icon, DoSave, out _);
-        soundBtn = IconButton("Btn Sound", panel, new Vector2(-8, -8 - step), soundIcon, ToggleVolume, out soundImg);
-        IconButton("Btn Home", panel, new Vector2(-8, -8 - step * 2), homeIcon, GoHome, out _);
+        if (!titleMode) saveBtn = IconButton("Btn Save", panel, new Vector2(-8, -8), icon, DoSave, out _);
+        soundBtn = IconButton("Btn Sound", panel, new Vector2(-8, soundY), soundIcon, ToggleVolume, out soundImg);
+        if (!titleMode) IconButton("Btn Home", panel, new Vector2(-8, -8 - step * 2), homeIcon, GoHome, out _);
 
         // 볼륨 조절 (스피커 왼쪽에 펼쳐짐)
-        volumePopup = Rt("Volume", panel, new Vector2(1, 1), new Vector2(-size - 22, -8 - step), new Vector2(360, size));
+        volumePopup = Rt("Volume", panel, new Vector2(1, 1), new Vector2(-size - 22, soundY), new Vector2(360, size));
         var vimg = volumePopup.gameObject.AddComponent<Image>(); vimg.color = new Color(0.08f, 0.06f, 0.1f, 0.85f);
         slider = BuildSlider(volumePopup);
         slider.value = BGMPlayer.Volume;
@@ -129,7 +133,8 @@ public class SaveButton : MonoBehaviour
         panel.gameObject.SetActive(o);
         dim.gameObject.SetActive(o);
         if (!o) volumePopup.gameObject.SetActive(false);
-        Time.timeScale = o ? 0f : 1f;                   // 설정 중엔 게임 일시정지
+        if (!titleMode) Time.timeScale = o ? 0f : 1f;   // 설정 중엔 게임 일시정지 (타이틀에선 안 함)
+        if (titleMode && o) volumePopup.gameObject.SetActive(true);   // 타이틀: 바로 소리 조절 표시
         gearBtn.localScale = Vector3.one * (o ? 0.9f : 1f);   // 열려 있으면 살짝 눌린 모양
     }
 
@@ -174,6 +179,6 @@ public class SaveButton : MonoBehaviour
 #else
         bool esc = Input.GetKeyDown(KeyCode.Escape);
 #endif
-        if (esc && !SceneTransition.Busy) SetOpen(!open);
+        if (esc && !titleMode && !SceneTransition.Busy && !SkillGuide.IsOpen && SkillGuide.ClosedFrame != Time.frameCount) SetOpen(!open);
     }
 }
