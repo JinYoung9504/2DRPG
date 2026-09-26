@@ -63,6 +63,7 @@
     <Compile Include="Assets\Backgrounds\Scripts\StageBounds.cs" />
     <Compile Include="Assets\Monsters\Scripts\MushroomEnemy.cs" />
     <Compile Include="Assets\Title\Scripts\SaveButton.cs" />
+    <Compile Include="Assets\Monsters\Scripts\SkeletonEnemy.cs" />
     <Compile Include="Assets\Title\Scripts\Toast.cs" />
     <Compile Include="Assets\Skills\Scripts\PlayerLevel.cs" />
     <Compile Include="Assets\Monsters\Scripts\WolfBoss.cs" />

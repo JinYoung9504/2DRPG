@@ -63,6 +63,7 @@
     <Compile Include="Assets\NPC\Editor\KnightTools.cs" />
     <Compile Include="Assets\Title\Editor\TitleSetup.cs" />
     <Compile Include="Assets\Backgrounds\Editor\BackgroundImporter.cs" />
+    <Compile Include="Assets\Monsters\Editor\SkeletonTools.cs" />
     <Compile Include="Assets\NPC\Editor\NpcTools.cs" />
     <Compile Include="Assets\Maps\Editor\BossMapBuilder.cs" />
     <Compile Include="Assets\Maps\Editor\WorldBuilder.cs" />
