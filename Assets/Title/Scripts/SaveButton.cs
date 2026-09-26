@@ -179,6 +179,6 @@ public class SaveButton : MonoBehaviour
 #else
         bool esc = Input.GetKeyDown(KeyCode.Escape);
 #endif
-        if (esc && !titleMode && !SceneTransition.Busy && !SkillGuide.IsOpen && SkillGuide.ClosedFrame != Time.frameCount) SetOpen(!open);
+        if (esc && !titleMode && !SceneTransition.Busy && !SkillGuide.IsOpen && SkillGuide.ClosedFrame != Time.frameCount && !SkillTeacher.IsOpen && SkillTeacher.ClosedFrame != Time.frameCount) SetOpen(!open);
     }
 }

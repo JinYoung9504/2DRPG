@@ -187,7 +187,16 @@ public class SeriaHUD : MonoBehaviour
         if (skills != null && lvSlots != null)
         {
             var all = skills.All;
-            for (int i = 0; i < all.Length; i++) UpdateSlot(lvSlots[i], all[i].Remaining, all[i].cooldown, !skills.Unlocked(all[i]));
+            int vis = 0;
+            for (int i = 0; i < all.Length; i++)
+            {
+                bool on = skills.Unlocked(all[i]);                            // 배운 스킬만 표시
+                if (lvSlots[i].rt.gameObject.activeSelf != on) lvSlots[i].rt.gameObject.SetActive(on);
+                if (!on) continue;
+                vis++;
+                lvSlots[i].rt.anchoredPosition = new Vector2(480 + 84 * vis + 36, lvSlots[i].rt.anchoredPosition.y);
+                UpdateSlot(lvSlots[i], all[i].Remaining, all[i].cooldown, false);
+            }
         }
     }
 }

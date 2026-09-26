@@ -1,6 +1,6 @@
 // 마을(시작 마을 · 정령의 숲 · 멸망한 왕국 성곽)에 들어가면 조작 · 스킬 설명 팝업
-//  - 게임을 켠 뒤 마을마다 처음 들어갈 때 한 번 자동으로 열림 (게임 일시정지)
-//  - 마을에서는 오른쪽 위 톱니바퀴 왼쪽의 [스킬] 버튼으로 언제든 다시 열기
+//  - 자동으로 열리지 않음 (스킬은 마을 NPC 에게 배움), 배운 스킬만 표시
+//  - 마을에서는 오른쪽 위 톱니바퀴 왼쪽의 [안내] 버튼으로 열기
 //  - 닫기: [확인] 버튼 · Enter · Esc
 //  - 스킬 수치(데미지 · 쿨타임 · 습득 레벨)는 세리아의 실제 설정값을 그대로 읽어서 표시
 using System.Collections;
@@ -31,7 +31,7 @@ public class SkillGuide : MonoBehaviour
         if (System.Array.IndexOf(Villages, scene) < 0) return;
         var g = new GameObject("Skill Guide");
         var sg = g.AddComponent<SkillGuide>();
-        sg.autoOpen = shownThisRun.Add(scene);
+        sg.autoOpen = false;                                  // 자동 팝업 없음 (스킬은 마을 NPC 에게 배움)
     }
 
     bool autoOpen;
@@ -92,7 +92,7 @@ public class SkillGuide : MonoBehaviour
         var b = Rt("Btn Skill Guide", c.transform, new Vector2(1, 1), new Vector2(-24 - 64 - 14, -24), new Vector2(64, 64));
         b.gameObject.AddComponent<Image>().color = new Color(0.08f, 0.06f, 0.1f, 0.8f);
         var t = Txt(Rt("Label", b, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(64, 64)), 22, Gold, TextAnchor.MiddleCenter, FontStyle.Bold);
-        t.text = "스킬";
+        t.text = "안내";
         var fx = b.gameObject.AddComponent<UIButtonFx>(); fx.onClick = () => { if (!IsOpen && !SaveButton.IsOpen) Open(); };
     }
 
@@ -169,7 +169,7 @@ public class SkillGuide : MonoBehaviour
         if (p != null)
             list.Add(new Row { icon = hud != null ? hud.skillIcon : null, key = "Shift", name = "스킬 베기", unlock = 1, learned = true,
                 desc = $"앞을 크게 베는 기술 · 데미지 {p.skillDamage:0} · 쿨타임 {p.skillCooldown:0.#}초" });
-        var sk = p != null ? p.GetComponent<SeriaSkills>() : null;
+        var sk = p != null ? p.GetComponent<SeriaSkills>() : null;   // 배운 스킬만 표시
         if (sk != null)
         {
             var info = new (SeriaSkills.Skill s, string icon, string desc)[]
@@ -180,6 +180,7 @@ public class SkillGuide : MonoBehaviour
                 (sk.swordRain, "Skills/Icon_SwordRain", "하늘 마법진에서 검이 비처럼 쏟아짐 (적마다 1번)"),
             };
             foreach (var i in info)
+                if (sk.Unlocked(i.s))
                 list.Add(new Row { icon = Resources.Load<Sprite>(i.icon), key = i.s.key.ToString(), name = i.s.name, unlock = i.s.unlockLevel,
                     learned = sk.Unlocked(i.s), desc = $"{i.desc} · 데미지 {i.s.damage:0} · 쿨타임 {i.s.cooldown:0.#}초" });
         }

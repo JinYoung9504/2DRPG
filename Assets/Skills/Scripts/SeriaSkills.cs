@@ -40,14 +40,19 @@ public class SeriaSkills : MonoBehaviour
         toastLocked = Resources.Load<Sprite>("Skills/Toast_Locked");
         lv.OnLevelUp += newLv =>
         {
-            if (newLv == swordWave.unlockLevel) Toast.Show(Resources.Load<Sprite>("Skills/Toast_Learn_SwordWave"), 2f);
-            if (newLv == lightning.unlockLevel) Toast.Show(Resources.Load<Sprite>("Skills/Toast_Learn_Lightning"), 2f);
-            if (newLv == meteor.unlockLevel) Toast.Show(Resources.Load<Sprite>("Skills/Toast_Learn_Meteor"), 2f);
-            if (newLv == swordRain.unlockLevel) Toast.Show(Resources.Load<Sprite>("Skills/Toast_Learn_SwordRain"), 2f);
+            // 새 스킬을 배울 수 있는 레벨이 되면 알림 (실제 습득은 마을 NPC 에게서)
+            foreach (var s in All)
+                if (newLv == s.unlockLevel && !SkillBook.Has(Id(s)))
+                    DamagePopup.ShowText(transform.position + new Vector3(0, 2.4f, 0), $"새 스킬 [{s.name}] — {TeacherOf(s)}에게 배울 수 있다!", new Color(1f, 0.85f, 0.4f));
         };
     }
 
-    public bool Unlocked(Skill s) => lv != null && lv.level >= s.unlockLevel;
+    public static string Id(Skill s) => s.key.ToString();
+    public bool CanLearn(Skill s) => lv != null && lv.level >= s.unlockLevel;          // 레벨 조건
+    public bool Unlocked(Skill s) => SkillBook.Has(Id(s));                             // NPC 에게 배웠는지
+    public static string TeacherOf(Skill s) =>
+        s.key == KeyCode.A || s.key == KeyCode.S ? "시작 마을 이장" : s.key == KeyCode.D ? "정령의 숲 요정" : "성곽의 저주받은 기사";
+    public Skill Find(string id) { foreach (var s in All) if (Id(s) == id) return s; return null; }
 
     void Update()
     {
@@ -58,7 +63,7 @@ public class SeriaSkills : MonoBehaviour
 
     void TryCast(Skill s)
     {
-        if (!Unlocked(s)) { Toast.Show(toastLocked, 1f); return; }
+        if (!Unlocked(s)) return;                                   // 아직 배우지 않은 스킬
         if (s.Remaining > 0f || !ctrl.CanAct) return;
         s.readyTime = Time.time + s.cooldown;
         float dir = sr.flipX ? -1f : 1f;

@@ -85,6 +85,7 @@
     <Compile Include="Assets\Monsters\Editor\SlimeTools.cs" />
     <Compile Include="Assets\Maps\Editor\WorldReorderBuilder.cs" />
     <Compile Include="Assets\Maps\Editor\ForestMap2Builder.cs" />
+    <Compile Include="Assets\Skills\Editor\SkillTeacherTools.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">

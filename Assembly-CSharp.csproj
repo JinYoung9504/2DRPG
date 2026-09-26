@@ -61,13 +61,17 @@
     <Compile Include="Assets\Backgrounds\Scripts\CameraFollow2D.cs" />
     <Compile Include="Assets\Skills\Scripts\SwordRain.cs" />
     <Compile Include="Assets\Monsters\Scripts\TreeEntEnemy.cs" />
+    <Compile Include="Assets\Monsters\Scripts\EnemyNoStack.cs" />
     <Compile Include="Assets\Skills\Scripts\BlinkFX.cs" />
     <Compile Include="Assets\Seria\Scripts\SeriaController.cs" />
     <Compile Include="Assets\Backgrounds\Scripts\StageBounds.cs" />
     <Compile Include="Assets\Build\Scripts\DemoGuard.cs" />
     <Compile Include="Assets\Monsters\Scripts\MushroomEnemy.cs" />
+    <Compile Include="Assets\Skills\Scripts\SkillBook.cs" />
     <Compile Include="Assets\Title\Scripts\SaveButton.cs" />
     <Compile Include="Assets\Title\Scripts\SkillGuide.cs" />
+    <Compile Include="Assets\Monsters\Scripts\BossHPBar.cs" />
+    <Compile Include="Assets\Skills\Scripts\SkillTeacher.cs" />
     <Compile Include="Assets\Monsters\Scripts\SkeletonEnemy.cs" />
     <Compile Include="Assets\Title\Scripts\Toast.cs" />
     <Compile Include="Assets\Skills\Scripts\PlayerLevel.cs" />

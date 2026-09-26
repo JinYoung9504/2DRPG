@@ -108,6 +108,7 @@ public class TitleScreen : MonoBehaviour
         PlayerHealth.CarryHP = -1f;                 // 새 게임: 체력 가득
         PlayerLevel.CarryLevel = 1; PlayerLevel.CarryExp = 0;   // 새 게임: 1레벨
         GameProgress.Reset(); MonsterTalk.ResetShown();
+        SkillBook.Reset();                          // 새 게임: 배운 스킬 초기화
         // 검은 화면 오프닝 대사 → 끝나면 첫 맵으로
         PrologueScreen.Play(() => SceneTransition.Go(firstScene, null));
     }

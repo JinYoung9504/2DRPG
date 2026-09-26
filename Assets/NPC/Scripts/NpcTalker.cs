@@ -54,7 +54,7 @@ public class NpcTalker : MonoBehaviour
         armed = false; talking = true; iconT = 0; icon.enabled = true;
         float d = Mathf.Sign(player.position.x - transform.position.x);
         sr.flipX = spriteFacesLeft ? d > 0 : d < 0;                          // 플레이어 쪽을 봄
-        System.Action done = () => { talking = false; icon.enabled = false; };
+        System.Action done = () => { talking = false; icon.enabled = false; var t = GetComponent<SkillTeacher>(); if (t != null) t.Open(); };   // 대화 후 스킬 습득 창
         if (dialogue != null && dialogue.lines != null && dialogue.lines.Length > 0)
         {
             var list = new DialogueUI.Entry[dialogue.lines.Length];

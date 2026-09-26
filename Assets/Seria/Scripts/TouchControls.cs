@@ -77,7 +77,8 @@ public class TouchControls : MonoBehaviour
             var all = lvSkills.All;
             string[] icons = { "Skills/Icon_SwordWave", "Skills/Icon_Lightning", "Skills/Icon_Meteor", "Skills/Icon_SwordRain" };
             for (int i = 0; i < all.Length; i++)
-                Btn(cgo.transform, all[i].name, Resources.Load<Sprite>(icons[i]), all[i].key, R, new Vector2(-510 + 150 * i, 360), 120);
+            { lvBtns.Add(Btn(cgo.transform, all[i].name, Resources.Load<Sprite>(icons[i]), all[i].key, R, new Vector2(-510 + 150 * i, 360), 120)); }
+            lvSkillComp = lvSkills;
         }
 
         // 스킬 버튼 위 쿨타임 표시
@@ -123,8 +124,22 @@ public class TouchControls : MonoBehaviour
         return circle;
     }
 
+    readonly System.Collections.Generic.List<RectTransform> lvBtns = new System.Collections.Generic.List<RectTransform>();
+    SeriaSkills lvSkillComp;
+
     void Update()
     {
+        // 배운 스킬 버튼만 표시 (빈 자리 없이 왼쪽부터)
+        if (lvSkillComp != null)
+        {
+            var all = lvSkillComp.All; int vis = 0;
+            for (int i = 0; i < all.Length && i < lvBtns.Count; i++)
+            {
+                bool on = lvSkillComp.Unlocked(all[i]);
+                if (lvBtns[i].gameObject.activeSelf != on) lvBtns[i].gameObject.SetActive(on);
+                if (on) lvBtns[i].anchoredPosition = new Vector2(-510 + 150 * vis++, 360);
+            }
+        }
         if (skillCd == null || player == null) return;
         skillCd.fillAmount = player.SkillCooldownRemaining / Mathf.Max(0.01f, player.skillCooldown);
     }
