@@ -16,6 +16,7 @@ public class BGMPlayer : MonoBehaviour
     // (배경 오브젝트 이름, Resources/Audio 안의 곡 이름)
     static readonly (string background, string clip)[] Areas =
     {
+        ("Title Screen", "BGM_Title"),          // 타이틀 화면 (시작하기 / 이어하기)
         ("Town Background", "BGM_Town"),
         ("Forest Background", "BGM_Forest"),
     };
