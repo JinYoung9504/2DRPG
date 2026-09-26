@@ -74,6 +74,7 @@
     <Compile Include="Assets\NPC\Scripts\DialogueData.cs" />
     <Compile Include="Assets\Settings\Scripts\BGMPlayer.cs" />
     <Compile Include="Assets\Seria\Scripts\VirtualInput.cs" />
+    <Compile Include="Assets\Monsters\Scripts\AtakhanBoss.cs" />
     <Compile Include="Assets\Maps\Scripts\MapPortal.cs" />
     <Compile Include="Assets\Seria\Scripts\PlayerHealth.cs" />
     <Compile Include="Assets\NPC\Scripts\DialogueUI.cs" />

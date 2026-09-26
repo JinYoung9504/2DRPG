@@ -13,6 +13,7 @@ public class MonsterTalk : MonoBehaviour
     public static void Attach(EnemyHealth e)
     {
         if (e == null || e.GetComponent<MonsterTalk>() != null) return;
+        if (e.GetComponent<SummonedMinion>() != null) return;          // 아타칸이 부른 소환수는 대화 없음
         foreach (var mb in e.GetComponents<MonoBehaviour>())
         {
             string n = mb.GetType().Name;
